@@ -1,4 +1,4 @@
-# Modular multi-protocol data aggregation, transformation and provisioning system for usage in Distributed Control Systems
+# Modular multi-protocol data collecting, transformation and provisioning system for usage in Distributed Control Systems
 (c) 2019 M. Schneider, D. A. Breunig, ZCPS at FhG IPA
 
 ## Introduction and system overview
