@@ -38,31 +38,31 @@ public:
                 json_object_object_add(k, "ModuleId", json_object_new_string(argv[++i]));
                 continue;
             }
-            /*if (strncmp(argv[i], "-a", 2) == 0) {
+            /*if (strncmp(argv[i], "--networkadapter", strlen(--networkadapter)) == 0) {
                 json_object_object_add(k, "NetworkAdapter", json_object_new_string(argv[++i]));
                 continue;
             }*/
-            if (strncmp(argv[i], "-p", 2) == 0) {
-                json_object_object_add(k, "ModuleIp", json_object_new_string(argv[++i]));
+            if (strncmp(argv[i], "--moduleip", strlen("--moduleip")) == 0) {
+                json_object_object_add(k, "--moduleip", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "-m", 2) == 0) {
+            if (strncmp(argv[i], "--managerhost", strlen("--managerhost")) == 0) {
                 json_object_object_add(k, "ManagerHost", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "-n", 2) == 0) {
+            if (strncmp(argv[i], "--managerhostrequestport", strlen("--managerhostrequestport")) == 0) {
                 json_object_object_add(k, "ManagerRequestPort", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "-o", 2) == 0) {
+            if (strncmp(argv[i], "--managerpublishport", strlen("--managerpublishport")) == 0) {
                 json_object_object_add(k, "ManagerPublishPort", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "-d", 2) == 0) {
+            if (strncmp(argv[i], "--datarouterhost", strlen("--datarouterhost")) == 0) {
                 json_object_object_add(k, "DataRouterHost", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "-e", 2) == 0) {
+            if (strncmp(argv[i], "--datarouterpublishport", strlen("--datarouterpublishport")) == 0) {
                 json_object_object_add(k, "DataRouterPublishPort", json_object_new_string(argv[++i]));
                 continue;
             }
