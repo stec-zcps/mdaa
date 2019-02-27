@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Fraunhofer.IPA.DataAggregator.Shared.Model;
+using Fraunhofer.IPA.DataAggregator.Communication.Messages;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;

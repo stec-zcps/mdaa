@@ -14,4 +14,10 @@
     <ProjectReference Include="..\..\Core\Shared\Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Docker\.dockerignore">
+      <DependentUpon>Dockerfile</DependentUpon>
+    </None>
+  </ItemGroup>
+
 </Project>

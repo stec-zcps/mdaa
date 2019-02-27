@@ -1,5 +1,6 @@
 ﻿using Fraunhofer.IPA.DataAggregator.Communication;
 using Fraunhofer.IPA.DataAggregator.Communication.Messages;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace Fraunhofer.IPA.DataAggregator.Modules.OperationModules.Aggregation
@@ -26,15 +27,23 @@ namespace Fraunhofer.IPA.DataAggregator.Modules.OperationModules.Aggregation
         #region Event Handling - MessageSubscriber
         public void OnNewConfigurationMessageReceived(AggregationModuleConfigurationMessage newConfigMessage)
         {
+            Log.Information($"Config received: {JsonConvert.SerializeObject(newConfigMessage, Formatting.Indented)}");
+
             if (newConfigMessage.ModuleId == ModuleId)
             {
-                Log.Information("Config received");
-                messagePublisher = new MessagePublisher(newConfigMessage.PublishingPort);
-                foreach (var aggregationConfig in newConfigMessage.AggregationConfig)
+                if (newConfigMessage.PublishingPort == 0)
                 {
-                    Aggregation newAggregation = new Aggregation(DataRouterHost, DataRouterPublishPort, aggregationConfig);
-                    newAggregation.OnNewResultCalculated += OnNewResultCalculated;
-                    newAggregation.Start();
+                    Log.Warning($"Invalid config received: PublishingPort is '{newConfigMessage.PublishingPort}'");
+                }
+                else
+                {
+                    messagePublisher = new MessagePublisher(newConfigMessage.PublishingPort);
+                    foreach (var aggregationConfig in newConfigMessage.AggregationConfig)
+                    {
+                        Aggregation newAggregation = new Aggregation(DataRouterHost, DataRouterPublishPort, aggregationConfig);
+                        newAggregation.OnNewResultCalculated += OnNewResultCalculated;
+                        newAggregation.Start();
+                    }
                 }
             }
         }

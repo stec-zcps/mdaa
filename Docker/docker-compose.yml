@@ -1,0 +1,98 @@
+version: "3"
+
+services:
+
+  Manager:
+    image: stec-zcps/mdaa/core/manager
+    hostname: Manager
+    networks:
+      - mdaa_backend
+    ports: 
+      - "${ManagerRequestPort}:${ManagerRequestPort}"
+      - "${ManagerPublishingPort}:${ManagerPublishingPort}"
+    volumes:
+      - "manager_config:/app/Config/"
+    environment:
+      RegistrationResponderPort: ${ManagerRequestPort}
+      MessagePublisherPort: ${ManagerPublishingPort}
+
+  DataRouter:
+    image: stec-zcps/mdaa/core/datarouter
+    hostname: DataRouter
+    networks:
+      - mdaa_backend
+    ports:
+      - "${DataRouterPublishingPort}:${DataRouterPublishingPort}"
+    depends_on:
+      - Manager
+    environment:
+      PublishingPort: ${DataRouterPublishingPort}
+      ManagerHost: Manager
+      ManagerPort: ${ManagerPublishingPort}
+
+  OperationModule_Math:
+    image: stec-zcps/mdaa/operationmodules/math
+    hostname: OperationModule_Math
+    networks:
+      - mdaa_backend
+    depends_on:
+      - Manager
+      - DataRouter
+    environment:
+      ModuleId: MathOperationModule1
+      ModuleIp: OperationModule_Aggregation
+      ManagerHost: Manager
+      ManagerRequestPort: ${ManagerPublishingPort}
+      ManagerPublishPort: ${ManagerPublishingPort}
+      DataRouterHost: DataRouter
+      DataRouterPublishPort: ${DataRouterPublishingPort}
+
+  OperationModule_Aggregation:
+    image: stec-zcps/mdaa/operationmodules/aggregation
+    hostname: OperationModule_Aggregation
+    networks:
+      - mdaa_backend
+    depends_on:
+      - Manager
+      - DataRouter
+    environment:
+      ModuleId: AggregationModule
+      ModuleIp: OperationModule_Aggregation
+      ManagerHost: Manager
+      ManagerRequestPort: ${ManagerRequestPort}
+      ManagerPublishPort: ${ManagerPublishingPort}
+      DataRouterHost: DataRouter
+      DataRouterPublishPort: ${DataRouterPublishingPort}
+
+  IntegrationModule_Mqtt:
+    image: stec-zcps/mdaa/integrationmodules/mqtt
+    hostname: IntegrationModule_Mqtt
+    networks:
+      - mdaa_backend
+    depends_on:
+      - Manager
+      - DataRouter
+      - MqttBroker
+    environment:
+      ModuleId: MqttIntegrationModule2
+      ModuleIp: localhost
+      ManagerHost: Manager
+      ManagerRequestPort: ${ManagerPublishingPort}
+      ManagerPublishPort: ${ManagerPublishingPort}
+      DataRouterHost: DataRouter
+      DataRouterPublishPort: ${DataRouterPublishingPort}
+
+  MqttBroker:
+    image: eclipse-mosquitto
+    hostname: MqttBroker
+    networks:
+      - mdaa_backend
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+networks:
+  mdaa_backend:
+
+volumes:
+  manager_config:

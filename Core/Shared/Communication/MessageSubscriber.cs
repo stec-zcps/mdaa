@@ -4,6 +4,7 @@ using NetMQ.Sockets;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
+using System;
 using System.Threading;
 
 namespace Fraunhofer.IPA.DataAggregator.Communication
@@ -56,18 +57,18 @@ namespace Fraunhofer.IPA.DataAggregator.Communication
 
                     if (messageTopicReceived.Equals(Topic))
                     { 
-                        Log.Debug("NewMessage");
-                        //try
-                        //{
-                        var format = "yyyy-MM-ddTH:mm:ss.fffZ"; // your datetime format
-                        var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
-                        T receivedMessageDeserialized = JsonConvert.DeserializeObject<T>(messageReceived, dateTimeConverter);
-                        OnNewMessageReceived(receivedMessageDeserialized);
-                        //}
-                        //catch(Exception e)
-                        //{
-                        //    Log.Error($"Unable to deseriliaze: {e}");
-                        //}
+                        Log.Verbose($"New message received on topic '{messageTopicReceived}': ${messageReceived}");
+                        try
+                        {
+                            var format = "yyyy-MM-ddTH:mm:ss.fffZ"; // your datetime format
+                            var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
+                            T receivedMessageDeserialized = JsonConvert.DeserializeObject<T>(messageReceived, dateTimeConverter);
+                            OnNewMessageReceived(receivedMessageDeserialized);
+                        }
+                        catch(Exception e)
+                        {
+                            Log.Error($"Unable to deseriliaze: {e}");
+                        }
                     }
                 }
                 subSocket.Unsubscribe(Topic);

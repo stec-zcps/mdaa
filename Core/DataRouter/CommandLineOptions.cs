@@ -9,7 +9,7 @@ namespace Fraunhofer.IPA.DataAggregator.DataRouter
         public uint PublishingPort { get; private set; }
 
         [Option(HelpText = "Host of the Manager.",
-                Default = "localhost")]
+                Default = "core")]
         public string ManagerHost { get; private set; }
 
         [Option(HelpText = "Port where the Manager publishes messages.",
