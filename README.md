@@ -60,8 +60,12 @@ Example
 ### MQTT-Client
 
 ### OPCUA-Server
+C++11, Linux
+Needs Open62541 library, see https://open62541.org/
 
 ### OPCUA-Client
+C++11, Linux
+Needs Open62541 library, see https://open62541.org/
 
 ## Current operation modules
 
