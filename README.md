@@ -70,6 +70,19 @@ Install both according to https://github.com/zeromq/cppzmq#build-instructions
 Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
 
 #### Usage
+The OPCUA-Server's publishing port is defined via a string entry in the "Configuration" object.
+
+Example
+```
+"Modules": {
+  "integrationModul": {
+    "Type": "OpcUaServer",
+    "Configuration": {
+      "PublishingPort": 4840
+    }
+  }
+}
+```
 
 ### OPCUA-Client
 #### Building
@@ -82,6 +95,19 @@ Install both according to https://github.com/zeromq/cppzmq#build-instructions
 Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
 
 #### Usage
+The OPCUA-Client module is bound to one OPCUA-Server. For configuration, the OPCUA-Client needs the address of this OPCUA-Server in a string field called "OpcUaServerAddress" in the form "opc.tcp://${HOSTNAME, DOMAIN OR IP}:${PORT}".
+
+Example
+```
+"Modules": {
+  "integrationModul1: {
+    "Type": "OpcUaClient",
+    "Configuration": {
+      "OpcUaServerAddress": "opc.tcp://opcuaserver.com:48010"
+    }
+  }
+}
+```
 
 ## Current operation modules
 
@@ -91,15 +117,15 @@ The math module uses a parsing library for mathematical operations. A calculatio
 Example
 ```
 "Operations": {
-      "Operation1": {
-        "Operator": "MathOperationModule1",
-        "Description": "${Inf2}*${Inf3}*${multiplicator}",
-        "Variables": {
-          "multiplicator": "10"
-        },
-        "Result": "InfOp1"
-      }
-	}
+  "Operation1": {
+    "Operator": "MathOperationModule1",
+    "Description": "${Inf2}*${Inf3}*${multiplicator}",
+    "Variables": {
+      "multiplicator": "10"
+    },
+    "Result": "InfOp1"
+  }
+}
 ```
 
 ### Aggregation module
@@ -108,16 +134,16 @@ The aggregation module can be used to aggregate data and build complex objects o
 
 ```
 "Operations": {
-      "Operation2": {
-        "Operator": "AggregationModule",
-        "Description": "{\"Info2\":${Inf2},\"Info2\":${Inf3},\"Infoa\":{\"Info2\":${Inf2}, \"InfoS\":{${value},${timestamp}}}}",
-        "Variables": {
-          "value": "10",
-          "timestamp": "2019-02-21T12:00:00.123Z"
-        },
-        "Result": "InfOp2"
-      }
-	}
+  "Operation2": {
+    "Operator": "AggregationModule",
+    "Description": "{\"Info2\":${Inf2},\"Info2\":${Inf3},\"Infoa\":{\"Info2\":${Inf2}, \"InfoS\":{${value},${timestamp}}}}",
+    "Variables": {
+      "value": "10",
+      "timestamp": "2019-02-21T12:00:00.123Z"
+    },
+    "Result": "InfOp2"
+  }
+}
 ```
 
 ## Setting up an example system
