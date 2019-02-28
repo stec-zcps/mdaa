@@ -5,14 +5,13 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z defs")
 
-set(JSON-C_INCLUDE_PATH /usr/local/include/json-c CACHE PATH "Pfad JSON-C Quelldateien")
+set(JSON-C_INCLUDE_PATH /usr/local/include/json-c)
 SET(OPEN62541_DIR ${CMAKE_SOURCE_DIR}/../../3rd_party/open62541)
-SET(HELFERLEIN_DIR /home/dbb/Desktop/git/helferlein)
 SET(COMMON_DIR ${CMAKE_SOURCE_DIR}/../CppCommon)
 
-include_directories(${OPEN62541_DIR} ${HELFERLEIN_DIR} ${JSON-C_INCLUDE_PATH} ${COMMON_DIR})
+include_directories(${OPEN62541_DIR} ${JSON-C_INCLUDE_PATH} ${COMMON_DIR})
 
-set(JSON-C_LIBRARY_PATH /usr/local/lib CACHE PATH "Pfad zur Bibliothek JSON-C")
+set(JSON-C_LIBRARY_PATH /usr/local/lib)
 
 link_directories(
         ${JSON-C_LIBRARY_PATH} ${COMMON_DIR}/cmake-build-debug
