@@ -69,7 +69,7 @@ Install both according to https://github.com/zeromq/cppzmq#build-instructions
 
 Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
 
-####Usage
+#### Usage
 
 ### OPCUA-Client
 #### Building
