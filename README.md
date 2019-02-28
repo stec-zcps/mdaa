@@ -64,7 +64,7 @@ Example
 C++11, Linux
 Needs Open62541 library in single-file version, see https://open62541.org/ "Single-file distribution and full source code:"
 
-Needs zeromq/libzmq https://github.com/zeromq/libzmq and C++-binding https://github.com/zeromq/cppzmq
+Needs zeromq/libzmq https://github.com/zeromq/libzmq and C++-binding https://github.com/zeromq/cppzmq  
 Install both according to https://github.com/zeromq/cppzmq#build-instructions
 
 Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
@@ -76,7 +76,7 @@ Before building the server, one must build the CppCommon-library placed in the "
 C++11, Linux
 Needs Open62541 library in single-file version, see https://open62541.org/ "Single-file distribution and full source code:"
 
-Needs zeromq/libzmq https://github.com/zeromq/libzmq and C++-binding https://github.com/zeromq/cppzmq
+Needs zeromq/libzmq https://github.com/zeromq/libzmq and C++-binding https://github.com/zeromq/cppzmq  
 Install both according to https://github.com/zeromq/cppzmq#build-instructions
 
 Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
@@ -86,6 +86,21 @@ Before building the server, one must build the CppCommon-library placed in the "
 ## Current operation modules
 
 ### Math module
+The math module uses a parsing library for mathematical operations. A calculation that shall be done in an operation can be put in the operation's description. The math module will first try to replace "${...}" with variables. All remaining "{...}" will be perceived as informations, to whose topics the math module will subscribe on the data router. Whenever the math module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result on the data router. It locally buffers all last values of information necessary for an calculation.
+
+Example
+```
+"Operations": {
+      "Operation1": {
+        "Operator": "MathOperationModule1",
+        "Description": "${Inf2}*${Inf3}*${multiplicator}",
+        "Variables": {
+          "multiplicator": "10"
+        },
+        "Result": "InfOp1"
+      }
+	}
+```
 
 ### Aggregation module
 
