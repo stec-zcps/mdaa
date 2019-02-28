@@ -60,7 +60,7 @@ Example
 ### MQTT-Client
 
 ### OPCUA-Server
-####Building
+#### Building
 C++11, Linux
 Needs Open62541 library in single-file version, see https://open62541.org/ "Single-file distribution and full source code:"
 
@@ -72,7 +72,7 @@ Before building the server, one must build the CppCommon-library placed in the "
 ####Usage
 
 ### OPCUA-Client
-####Building
+#### Building
 C++11, Linux
 Needs Open62541 library in single-file version, see https://open62541.org/ "Single-file distribution and full source code:"
 
@@ -81,7 +81,7 @@ Install both according to https://github.com/zeromq/cppzmq#build-instructions
 
 Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
 
-####Usage
+#### Usage
 
 ## Current operation modules
 
