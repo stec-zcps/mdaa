@@ -86,7 +86,7 @@ Before building the server, one must build the CppCommon-library placed in the "
 ## Current operation modules
 
 ### Math module
-The math module uses a parsing library for mathematical operations. A calculation that shall be done in an operation can be put in the operation's description. The math module will first try to replace "${...}" with variables. All remaining "{...}" will be perceived as informations, to whose topics the math module will subscribe on the data router. Whenever the math module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result on the data router. It locally buffers all last values of information necessary for an calculation.
+The math module uses a parsing library for mathematical operations. A calculation that shall be done in an operation can be put in the operation's description. The math module will first try to replace "${...}"-values with variables defined in the operation. All remaining "{...}"-values will be perceived as informations, to whose topics the math module will subscribe on the data router. Whenever the math module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result over the data router. It locally buffers all last values of information necessary for an calculation.
 
 Example
 ```
@@ -103,6 +103,22 @@ Example
 ```
 
 ### Aggregation module
+
+The aggregation module can be used to aggregate data and build complex objects out of simple information and variables. A new object can be described as a JSON string with "${...}"-values that will be replaced with variables (first) and information entries (second). "${...}"-values which couldn't be replaced with variables defined in the operation, will be perceived as informations, to whose topics the module has to subscribe to on the data router. Whenever the aggregation module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result over the data router. It locally buffers all last values of information necessary for an operation.
+
+```
+"Operations": {
+      "Operation2": {
+        "Operator": "AggregationModule",
+        "Description": "{\"Info2\":${Inf2},\"Info2\":${Inf3},\"Infoa\":{\"Info2\":${Inf2}, \"InfoS\":{${value},${timestamp}}}}",
+        "Variables": {
+          "value": "10",
+          "timestamp": "2019-02-21T12:00:00.123Z"
+        },
+        "Result": "InfOp2"
+      }
+	}
+```
 
 ## Setting up an example system
 ### Introduction model example
