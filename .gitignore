@@ -1007,7 +1007,7 @@ ASALocalRun/
 *Aggregration/bin*
 *Aggregration/obj*
 *ext*
-*open62541*
+*3rd_party*
 *build*
 *debug*
 *idea*
