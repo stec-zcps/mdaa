@@ -10,8 +10,9 @@
 The implementation is divided into modules and utilises ZMQ for message exchange. All modules can be run independently from each other and on different machines, however the integration and operation modules will not do anything without a proper connection to a Manager with a correct configuration and instructional model.
 The manager and the data router are the core modules and necessary for usage.
 
-- Manager (.NET)
-- Data router
+- Core modules
+  - Manager (.NET)
+  - Data router
 - Integration modules
   - MQTT-client
   - OPCUA-server
