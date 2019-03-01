@@ -38,7 +38,6 @@ Example
 ```
 {
   "ModuleId": "OpcUaClientModule",
-  "NetworkAdapter":"ens33",
   "ModuleIp":"192.168.0.164",
   "ManagerHost": "192.168.0.163",
   "ManagerRequestPort": 40010,
@@ -47,6 +46,14 @@ Example
   "DataRouterPublishPort": 40020
 }
 ```
+
+- ModuleId: id that modules use for registering at the manager; module key in the instruction model
+- ModuleIp: ip-address over which the module is accessible by the data router
+- ManagerHost: ip-address of the manager's host
+- ManagerRequestPort: port for registration requests at the manager
+- ManagerPublishPort: port over which the manager distributes instructions
+- DataRouterHost: ip-address of the data router's host
+- DataRouterPublishPort: port over which the data router distributes information
 
 In all integration modules, a standard config is implemented and can be changed using completely lower case command line parameters.
 
