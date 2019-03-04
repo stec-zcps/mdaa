@@ -1,24 +1,24 @@
-# Modular multi-protocol data collecting, transformation and provisioning system for usage in Distributed Control Systems
-(c) 2019 M. Schneider, D. A. Breunig, ZCPS at FhG IPA  
-[Deutsche Dokumentation](LIESMICH.md)
+# Modulares Multiprotokollsystem für Datensammlung, -wandlung und -bereitstellung in verteilten Steuerungssystemen
+(c) 2019 M. Schneider, D. A. Breunig, ZCPS am FhG IPA  
+[English Documentation](README.md)
 
-## Introduction and system overview
+## Einführung und Übersicht
 
-## Architecture
+## Architektur
 
-### Overview
+### Übersicht
 
 The implementation is divided into modules and utilises ZMQ for message exchange. All modules can be run independently from each other and on different machines, however the integration and operation modules will not do anything without a proper connection to a Manager with a correct configuration and instructional model.
 The manager and the data router are the core modules and necessary for usage.
 
-- Core modules
+- Kernmodule
   - Manager (.NET)
   - Data router
-- Integration modules
+- Integrationsmodule
   - MQTT-client
   - OPCUA-server
   - OPCUA-client
-- Operation modules
+- Operationsmodule
   - Math module
   - Aggregation module
 
@@ -26,11 +26,11 @@ The manager and the data router are the core modules and necessary for usage.
 
 ### Data router
 
-### Modules
+### Module
 
 The OPCUA-client and -server modules are currently one-way only, meaning the OPCUA-client may only read data from an OPCUA-server, while the OPCUA-server module can only provide data from the system. The MQTT client can both read and provide data.
 
-#### Local module configuration
+#### Lokale Modulkonfiguration
 
 Modules need a basic configuration to know their ModuleId (serves as key in the instructional model), their IP address (may be done via NetworkAdapter identification in the cpp integration modules; outcommented at the time) and the addresses of the manager and the data router.
 
@@ -62,7 +62,7 @@ Example
 ./OpcUaServer --moduleid OpcUaServer1 --moduleip 172.10.1.16
 ```
 
-## Current integration modules
+## Derzeitige Integrationsmodule
 
 ### MQTT-Client
 
@@ -116,9 +116,9 @@ Example
 }
 ```
 
-## Current operation modules
+## Derzeitige Operationsmodule
 
-### Math module
+### Modul für mathematische Operationen
 The math module uses a parsing library for mathematical operations. A calculation that shall be done in an operation can be put in the operation's description. The math module will first try to replace "${...}"-values with variables defined in the operation. All remaining "{...}"-values will be perceived as informations, to whose topics the math module will subscribe on the data router. Whenever the math module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result over the data router. It locally buffers all last values of information necessary for an calculation.
 
 Example
@@ -135,7 +135,7 @@ Example
 }
 ```
 
-### Aggregation module
+### Aggregationsmodul
 The aggregation module can be used to aggregate data and build complex objects out of simple information and variables. A new object can be described as a JSON string with "${...}"-values that will be replaced with variables (first) and information entries (second). "${...}"-values which couldn't be replaced with variables defined in the operation, will be perceived as informations, to whose topics the module has to subscribe to on the data router. Whenever the aggregation module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result over the data router. It locally buffers all last values of information necessary for an operation.
 
 ```
@@ -152,8 +152,8 @@ The aggregation module can be used to aggregate data and build complex objects o
 }
 ```
 
-## Setting up an example system
-### Introduction model example
+## Aufbau eines Beispielsystems
+### Instruktionsmodellbeispiel
 ```
 {
   "Manager1": {
