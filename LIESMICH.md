@@ -7,34 +7,31 @@
 ## Architektur
 
 ### Übersicht
-
-The implementation is divided into modules and utilises ZMQ for message exchange. All modules can be run independently from each other and on different machines, however the integration and operation modules will not do anything without a proper connection to a Manager with a correct configuration and instructional model.
-The manager and the data router are the core modules and necessary for usage.
+Die Applikation ist in separat betreibbare Module aufgeteilt und nutzt ZMQ zum Nachrichtenaustausch. Alle Module können separat und auf verschiedenen Maschinen betrieben werden, allerdings sind die Integrations- und Operationsmodule auf eine Verbindung zu einem Manager- und einem Data-Router-Modul angewiesen, um funktionieren zu können.
+Manager und Data-Router sind die Kernmodule und unbedingt notwendig.
 
 - Kernmodule
   - Manager (.NET)
   - Data router
 - Integrationsmodule
-  - MQTT-client
-  - OPCUA-server
-  - OPCUA-client
+  - MQTT-Client
+  - OPCUA-Server
+  - OPCUA-Client
 - Operationsmodule
-  - Math module
-  - Aggregation module
+  - Mathemodul
+  - Aggregationsmodul
 
 ### Manager
 
 ### Data router
 
 ### Module
-
-The OPCUA-client and -server modules are currently one-way only, meaning the OPCUA-client may only read data from an OPCUA-server, while the OPCUA-server module can only provide data from the system. The MQTT client can both read and provide data.
+Die OPCUA-Client- und -Servermodule sind derzeit Einbahnstraßen - das OPCUA-Clientmodul kann nur lesend auf einen OPCUA-Server zugreifen, das OPCUA-Servermodul kann nur Daten bereitstellen und keine Änderungen entgegennehmen. Der MQTT-Client kann Daten subskripieren/lesen und publizieren/bereitstellen.
 
 #### Lokale Modulkonfiguration
+Module benötigen eine Grundkonfiguration, um ihre Modul-ID (dient als Schlüssel im Instruktionsmodell), ihre IP-Adresse (kann in den Cpp-Modulen auch über die NetworkAdapter-Definition geschehen; ist aber derzeit auskommentiert) und die Adressen von Manager- und Data-Router-Modul.
 
-Modules need a basic configuration to know their ModuleId (serves as key in the instructional model), their IP address (may be done via NetworkAdapter identification in the cpp integration modules; outcommented at the time) and the addresses of the manager and the data router.
-
-Example
+Beispiel
 ```
 {
   "ModuleId": "OpcUaClientModule",
@@ -47,17 +44,17 @@ Example
 }
 ```
 
-- ModuleId: id that modules use for registering at the manager; module key in the instruction model
-- ModuleIp: ip-address over which the module is accessible by the data router
-- ManagerHost: ip-address of the manager's host
-- ManagerRequestPort: port for registration requests at the manager
-- ManagerPublishPort: port over which the manager distributes instructions
-- DataRouterHost: ip-address of the data router's host
-- DataRouterPublishPort: port over which the data router distributes information
+- ModuleId: Id, die das Modul bei der Registrierung beim Manager angibt und auf die es horcht; Modulschlüssel im Instruktionsmodell
+- ModuleIp: IP-Adresse, über die der Datarouter beim Modul subskribieren kann
+- ManagerHost: IP-Adresse des Managermoduls
+- ManagerRequestPort: Port für Registrierungsanfragen am Managermodulhost
+- ManagerPublishPort: Port über den das Managermodul Instruktionen publiziert
+- DataRouterHost: IP-Adresse des Datarouters
+- DataRouterPublishPort: Port über den der Datarouter Instruktionen publiziert
 
-In all integration modules, a standard config is implemented and can be changed using completely lower case command line parameters.
+Alle aktuellen Integrationsmodelle verfügen über eine Standardkonfiguration, die fest implementiert ist und über kleingeschriebene Startparameter überschrieben werden kann.
 
-Example
+Beispiel
 ```
 ./OpcUaServer --moduleid OpcUaServer1 --moduleip 172.10.1.16
 ```
@@ -67,19 +64,19 @@ Example
 ### MQTT-Client
 
 ### OPCUA-Server
-#### Building
+#### Bauen
 C++11, Linux
-Needs Open62541 library in single-file version, see https://open62541.org/ "Single-file distribution and full source code:"
+Benötigt die Open62541-Library in der Single-File-Version, beziehbar unter https://open62541.org/ "Single-file distribution and full source code:"
 
-Needs zeromq/libzmq https://github.com/zeromq/libzmq and C++-binding https://github.com/zeromq/cppzmq  
-Install both according to https://github.com/zeromq/cppzmq#build-instructions
+Benötigt zeromq/libzmq https://github.com/zeromq/libzmq und die C++-Einbindung https://github.com/zeromq/cppzmq  
+Installation nach https://github.com/zeromq/cppzmq#build-instructions
 
-Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
+Bevor der Server gebaut werden kann, muss die CppCommon-library aus dem "IntegrationModules"-Ordner gebaut werden.
 
-#### Usage
-The OPCUA-Server's publishing port is defined via a string entry in the "Configuration" object.
+#### Nutzung
+Der Port über den auf den instanziierten OPCUA-Server zugegriffen werden kann, wird über einen Eintrag im "Configuration"-Objekt hinterlegt.
 
-Example
+Beispiel 
 ```
 "Modules": {
   "integrationModul": {
@@ -92,19 +89,19 @@ Example
 ```
 
 ### OPCUA-Client
-#### Building
+#### Bauen
 C++11, Linux
-Needs Open62541 library in single-file version, see https://open62541.org/ "Single-file distribution and full source code:"
+Benötigt die Open62541-Library in der Single-File-Version, beziehbar unter https://open62541.org/ "Single-file distribution and full source code:"
 
-Needs zeromq/libzmq https://github.com/zeromq/libzmq and C++-binding https://github.com/zeromq/cppzmq  
-Install both according to https://github.com/zeromq/cppzmq#build-instructions
+Benötigt zeromq/libzmq https://github.com/zeromq/libzmq und die C++-Einbindung https://github.com/zeromq/cppzmq  
+Installation nach https://github.com/zeromq/cppzmq#build-instructions
 
-Before building the server, one must build the CppCommon-library placed in the "IntegrationModules"-directory.
+Bevor der Client gebaut werden kann, muss die CppCommon-library aus dem "IntegrationModules"-Ordner gebaut werden.
 
-#### Usage
-The OPCUA-Client module is bound to one OPCUA-Server. For configuration, the OPCUA-Client needs the address of this OPCUA-Server in a string field called "OpcUaServerAddress" in the form "opc.tcp://${HOSTNAME, DOMAIN OR IP}:${PORT}".
+#### Nutzung
+Das OPCUA-Clientmodul kann ausschließlich zu einem OPCUA-Server angebunden werden. Die Adresse des OPCUA-Servers wird über einen String-Eintrag "OpcUaServerAddress" (Format "opc.tcp://${HOSTNAME, DOMAIN OR IP}:${PORT}") im "Configuration"-Objekt hinterlegt. 
 
-Example
+Beispiel
 ```
 "Modules": {
   "integrationModul1: {
@@ -118,10 +115,10 @@ Example
 
 ## Derzeitige Operationsmodule
 
-### Modul für mathematische Operationen
-The math module uses a parsing library for mathematical operations. A calculation that shall be done in an operation can be put in the operation's description. The math module will first try to replace "${...}"-values with variables defined in the operation. All remaining "{...}"-values will be perceived as informations, to whose topics the math module will subscribe on the data router. Whenever the math module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result over the data router. It locally buffers all last values of information necessary for an calculation.
+### Mathemodul
+Das Mathemodul verwendet eine Parsing-Library für Berechnungen. Eine Berechnung, die in einem Vorgang durchgeführt werden soll, wird in der Beschreibung des Vorgangs definiert. Das Mathemodul versucht zuerst, "${....}"-Werte durch Variablen zu ersetzen, die in der Operation definiert sind. Alle übrigen "{....}"-Werte werden als Informationen interpretiert, zu deren Topics sich das Mathemodul beim Data-Router subskribiert. Wann immer das Mathemodul über einen Topic eine neue Information erhält, die Teil einer Operation ist, wird es den gesamten Vorgang erneut ausführen und das Ergebnis über den Data-Router verteilen. Es puffert lokal alle letzten Werte der für eine Berechnung notwendigen Informationen.
 
-Example
+Beispiel
 ```
 "Operations": {
   "Operation1": {
@@ -136,7 +133,7 @@ Example
 ```
 
 ### Aggregationsmodul
-The aggregation module can be used to aggregate data and build complex objects out of simple information and variables. A new object can be described as a JSON string with "${...}"-values that will be replaced with variables (first) and information entries (second). "${...}"-values which couldn't be replaced with variables defined in the operation, will be perceived as informations, to whose topics the module has to subscribe to on the data router. Whenever the aggregation module receives a new information that is part of an operation over one of those topics, it will re-run the whole operation and distribute the result over the data router. It locally buffers all last values of information necessary for an operation.
+Das Aggregationsmodul kann verwendet werden, um Daten zu aggregieren und komplexe Objekte aus einfachen Informationen und Variablen aufzubauen. Ein neues Objekt kann als JSON-String mit "${...}"-Werten beschrieben werden, die durch Variablen (vorrangig) und Informationseinträge ersetzt werden. "${....}"-Werte, die nicht durch definierte Variablen ersetzt werden können, werden als Informationen interpreitert, zu deren Topics sich das Modul auf dem Data-Router-Modul subskribiert. Wenn das Aggregationsmodul eine neue Information erhält, die Teil einer Operation ist, wird die gesamte Operation erneut ausgeführt und das Ergebnis über den Data-Router verteilt. Es puffert lokal alle letzten Werte der für eine Operation notwendigen Informationen.
 
 ```
 "Operations": {
