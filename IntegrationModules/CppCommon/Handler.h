@@ -34,7 +34,7 @@ public:
         json_object* k = json_tokener_parse(std_cfg);
 
         for (int i = 0; i < argc - 1; ++i) {
-            std::cout << "Parsing parameter " << i << ": " << argv[i] << std::endl;
+            std::cout << "Handler: Parsing parameter " << i << ": " << argv[i] << std::endl;
 
             if (strncmp(argv[i], "--moduleid", strlen("--moduleid")) == 0) {
                 json_object_object_add(k, "ModuleId", json_object_new_string(argv[++i]));
@@ -45,7 +45,7 @@ public:
                 continue;
             }*/
             if (strncmp(argv[i], "--moduleip", strlen("--moduleip")) == 0) {
-                json_object_object_add(k, "--moduleip", json_object_new_string(argv[++i]));
+                json_object_object_add(k, "ModuleIp", json_object_new_string(argv[++i]));
                 continue;
             }
             if (strncmp(argv[i], "--managerhost", strlen("--managerhost")) == 0) {
@@ -70,9 +70,9 @@ public:
             }
         }
 
-        std::cout << "Configuration: " << json_object_to_json_string_ext(k, JSON_C_TO_STRING_PRETTY) << std::endl;
+        std::cout << "Handler: Configuration: " << json_object_to_json_string_ext(k, JSON_C_TO_STRING_PRETTY) << std::endl;
 
-        std::cout << "Creating Handler\n";
+        std::cout << "Handler: Creating Handler\n";
         ModuleId = std::string(json_object_get_string(json_object_object_get(k, "ModuleId")));
         ModuleIp = std::string(json_object_get_string(json_object_object_get(k, "ModuleIp")));
         ManagerHost = std::string(json_object_get_string(json_object_object_get(k, "ManagerHost")));
@@ -86,9 +86,9 @@ public:
         adr_broker_req = "tcp://" + ManagerHost + ":" + std::to_string(ManagerRequestPort);
         adr_data_sub = "tcp://" + DataRouterHost + ":" + std::to_string(DataRouterPublishPort);
 
-        std::cout << "adr_broker_sub " << adr_broker_sub << std::endl
-                << "adr_broker_req " << adr_broker_req << std::endl
-                << "adr_data_sub " << adr_data_sub << std::endl;
+        std::cout << "Handler: adr_broker_sub " << adr_broker_sub << std::endl
+                << "Handler: adr_broker_req " << adr_broker_req << std::endl
+                << "Handler: adr_data_sub " << adr_data_sub << std::endl;
 
         //NetworkAdapter = std::string(json_object_get_string(json_object_object_get(konfig, "NetworkAdapter")));
     }
