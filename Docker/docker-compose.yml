@@ -3,7 +3,7 @@ version: "3"
 services:
 
   Manager:
-    image: stec-zcps/mdaa/core/manager
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/core/manager
     hostname: Manager
     networks:
       - mdaa_backend
@@ -15,9 +15,13 @@ services:
     environment:
       RegistrationResponderPort: ${ManagerRequestPort}
       MessagePublisherPort: ${ManagerPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
 
   DataRouter:
-    image: stec-zcps/mdaa/core/datarouter
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/core/datarouter
     hostname: DataRouter
     networks:
       - mdaa_backend
@@ -29,9 +33,13 @@ services:
       PublishingPort: ${DataRouterPublishingPort}
       ManagerHost: Manager
       ManagerPort: ${ManagerPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
 
   OperationModule_Math:
-    image: stec-zcps/mdaa/operationmodules/math
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/operationmodules/math
     hostname: OperationModule_Math
     networks:
       - mdaa_backend
@@ -46,9 +54,13 @@ services:
       ManagerPublishPort: ${ManagerPublishingPort}
       DataRouterHost: DataRouter
       DataRouterPublishPort: ${DataRouterPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
 
   OperationModule_Aggregation:
-    image: stec-zcps/mdaa/operationmodules/aggregation
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/operationmodules/aggregation
     hostname: OperationModule_Aggregation
     networks:
       - mdaa_backend
@@ -63,6 +75,56 @@ services:
       ManagerPublishPort: ${ManagerPublishingPort}
       DataRouterHost: DataRouter
       DataRouterPublishPort: ${DataRouterPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
+
+  IntegrationModule_OpcUaClient:
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/opcua-client
+    hostname: IntegrationModule_OpcUaClient
+    networks:
+      - mdaa_backend
+    depends_on:
+      - Manager
+      - DataRouter
+      - MqttBroker
+    environment:
+      ModuleId: OpcUaClientModule
+      ModuleIp: IntegrationModule_OpcUaClient
+      ManagerHost: Manager
+      ManagerRequestPort: ${ManagerPublishingPort}
+      ManagerPublishPort: ${ManagerPublishingPort}
+      DataRouterHost: DataRouter
+      DataRouterPublishPort: ${DataRouterPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
+
+  IntegrationModule_OpcUaServer:
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/opcua-server
+    hostname: IntegrationModule_OpcUaServer
+    networks:
+      - mdaa_backend
+    ports:
+      - "4840:4840"
+    depends_on:
+      - Manager
+      - DataRouter
+      - MqttBroker
+    environment:
+      ModuleId: OpcUaServerModule
+      ModuleIp: IntegrationModule_OpcUaServer
+      ManagerHost: Manager
+      ManagerRequestPort: ${ManagerPublishingPort}
+      ManagerPublishPort: ${ManagerPublishingPort}
+      DataRouterHost: DataRouter
+      DataRouterPublishPort: ${DataRouterPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
 
   IntegrationModule_Mqtt:
     image: stec-zcps/mdaa/integrationmodules/mqtt
@@ -74,13 +136,17 @@ services:
       - DataRouter
       - MqttBroker
     environment:
-      ModuleId: MqttIntegrationModule2
-      ModuleIp: localhost
+      ModuleId: MqttIntegrationModule
+      ModuleIp: IntegrationModule_Mqtt
       ManagerHost: Manager
       ManagerRequestPort: ${ManagerPublishingPort}
       ManagerPublishPort: ${ManagerPublishingPort}
       DataRouterHost: DataRouter
       DataRouterPublishPort: ${DataRouterPublishingPort}
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
 
   MqttBroker:
     image: eclipse-mosquitto
@@ -90,6 +156,10 @@ services:
     ports:
       - "1883:1883"
       - "9001:9001"
+    logging:
+      driver: "json-file"
+        options:
+          max-size: "10m"
 
 networks:
   mdaa_backend:
