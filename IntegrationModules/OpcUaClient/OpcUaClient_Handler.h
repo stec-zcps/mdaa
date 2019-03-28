@@ -35,6 +35,8 @@ public:
     explicit OpcUaClient_Handler(const char* std_cfg, int argc, char** argv) : Handler(std_cfg, argc, argv){};
 
     bool get_new_setup(bool block, bool need_cfg) final {
+        std::cout << "OpcUaClient_Handler: get_new_setup: block = " << block << ", need_cfg = " << need_cfg << std::endl;
+
         bool i_ok = false, c_ok = false;
 
         while (!i_ok || !c_ok) {

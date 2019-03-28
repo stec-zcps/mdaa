@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z defs")
 
 set(JSON-C_INCLUDE_PATH /usr/local/include/json-c)
-SET(OPEN62541_DIR ${CMAKE_SOURCE_DIR}/../../3rd_party/open62541)
+SET(OPEN62541_DIR ${CMAKE_SOURCE_DIR}/build/open62541)
 SET(COMMON_DIR ${CMAKE_SOURCE_DIR}/../CppCommon)
 
 include_directories(${OPEN62541_DIR} ${JSON-C_INCLUDE_PATH} ${COMMON_DIR})
@@ -14,7 +14,7 @@ include_directories(${OPEN62541_DIR} ${JSON-C_INCLUDE_PATH} ${COMMON_DIR})
 set(JSON-C_LIBRARY_PATH /usr/local/lib)
 
 link_directories(
-        ${JSON-C_LIBRARY_PATH} ${COMMON_DIR}/cmake-build-debug
+        ${JSON-C_LIBRARY_PATH} ${COMMON_DIR}/build
 )
 
 add_executable(OpcUaClient main.cpp ${OPEN62541_DIR}/open62541.c ${OPEN62541_DIR}/open62541.h OpcUaClient_Handler.h OpcUaClient_IntegrationModule.h OpcUaClient_InfoSet.h OpcUaClient_Info.h)

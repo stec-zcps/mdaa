@@ -34,6 +34,8 @@ public:
         json_object* k = json_tokener_parse(std_cfg);
 
         for (int i = 0; i < argc - 1; ++i) {
+            std::cout << "Parsing parameter " << i << ": " << argv[i] << std::endl;
+
             if (strncmp(argv[i], "--moduleid", strlen("--moduleid")) == 0) {
                 json_object_object_add(k, "ModuleId", json_object_new_string(argv[++i]));
                 continue;
@@ -68,6 +70,8 @@ public:
             }
         }
 
+        std::cout << "Configuration: " << json_object_to_json_string_ext(k, JSON_C_TO_STRING_PRETTY) << std::endl;
+
         std::cout << "Creating Handler\n";
         ModuleId = std::string(json_object_get_string(json_object_object_get(k, "ModuleId")));
         ModuleIp = std::string(json_object_get_string(json_object_object_get(k, "ModuleIp")));
@@ -82,26 +86,38 @@ public:
         adr_broker_req = "tcp://" + ManagerHost + ":" + std::to_string(ManagerRequestPort);
         adr_data_sub = "tcp://" + DataRouterHost + ":" + std::to_string(DataRouterPublishPort);
 
+        std::cout << "adr_broker_sub " << adr_broker_sub << std::endl
+                << "adr_broker_req " << adr_broker_req << std::endl
+                << "adr_data_sub " << adr_data_sub << std::endl;
+
         //NetworkAdapter = std::string(json_object_get_string(json_object_object_get(konfig, "NetworkAdapter")));
     }
 
     void connect_and_subscribe() {
-        std::cout << "Connecting to Manager\n";
-        subscriber.connect(adr_broker_sub);
-        subscriber.setsockopt(ZMQ_RCVTIMEO, 0);
-        subscriber.setsockopt(ZMQ_SUBSCRIBE, "Instructions", 1);
-        subscriber.setsockopt(ZMQ_SUBSCRIBE, "Configuration", 1);
+        std::cout << "connect_and_subscribe: Connecting to Manager\n";
+        std::cout << "connect_and_subscribe: Connecting subscriber ...\n";
 
-        requester.connect(adr_broker_req);
-        requester.setsockopt(ZMQ_SNDTIMEO, 30000);
-        requester.setsockopt(ZMQ_RCVTIMEO, 30000);
+        try{
+            subscriber.connect(adr_broker_sub);
+            subscriber.setsockopt(ZMQ_RCVTIMEO, 0);
+            subscriber.setsockopt(ZMQ_SUBSCRIBE, "Instructions", 1);
+            subscriber.setsockopt(ZMQ_SUBSCRIBE, "Configuration", 1);
+
+            std::cout << "connect_and_subscribe: Connecting requester ...\n";
+            requester.connect(adr_broker_req);
+            requester.setsockopt(ZMQ_SNDTIMEO, 30000);
+            requester.setsockopt(ZMQ_RCVTIMEO, 30000);
+        }catch(int e){
+
+        }
     }
 
     bool register_handler() {
+        std::cout << "register_handler: Registering handler ...\n";
         std::string msg_c;
         //msg_c = R"({"ModuleId":")" + ModuleId + R"(", "Ip":")" + get_ip_address(NetworkAdapter) + R"("})";
         msg_c = R"({"ModuleId":")" + ModuleId + R"(", "Ip":")" + ModuleIp + R"("})";
-        std::cout << "Register msg: " << msg_c << "\n";
+        std::cout << "register_handler: Register msg: " << msg_c << "\n";
 
         zmq::message_t c(msg_c.c_str(), msg_c.length());
 
@@ -110,7 +126,7 @@ public:
         zmq::message_t antw;
         requester.recv(&antw);
         std::string antw_k = std::string((char*) antw.data());
-        std::cout << "Register response msg: " << antw_k << "\n";
+        std::cout << "register_handler: Register response msg: " << antw_k << "\n";
 
         return (antw_k == "OK");
     }
