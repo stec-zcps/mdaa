@@ -28,7 +28,11 @@ inline void UA_NodeId_fromString(const std::string& s, UA_NodeId* target) {
         if (i == std::string::npos) {
             return;
         } else {
-            *target = UA_NODEID_STRING(nsIndex, (char*) s.substr(i + 3, (s.size() - c)).c_str());
+
+            std::string sub = s.substr(i+3);
+            char* nId = (char*)calloc(1, (sub.size()+1) * sizeof(char));
+            strcat(nId, sub.c_str());
+            *target = UA_NODEID_STRING(nsIndex, nId);
         }
     } else {
         std::string substring = s.substr(i + 2, s.size() - c);

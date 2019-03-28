@@ -11,31 +11,19 @@
 
 class OpcUaClient_Handler : Handler {
 public:
-    std::string ModuleId;
-    std::string ModuleIp;
-    std::string ManagerHost;
-    std::uint16_t ManagerRequestPort;
-    std::uint16_t ManagerPublishPort;
-    std::string DataRouterHost;
-    std::uint16_t DataRouterPublishPort;
-    //std::string NetworkAdapter;
 
-    std::string adr_broker_sub, adr_broker_req, adr_data_sub, adr_local;
-
-    zmq::context_t context_sub = zmq::context_t (1), context_req = zmq::context_t (1);
-    zmq::socket_t subscriber = zmq::socket_t (context_sub, ZMQ_SUB);
-    zmq::socket_t requester = zmq::socket_t (context_req, ZMQ_REQ);
+    std::string adr_local;
 
     OpcUaClient_IntegrationModule* m = nullptr;
     std::string adr_opcua;
-    OpcUaClient_InfoSet Infos;
+    OpcUaClient_InfoSet opcUaClientInfoSet;
 
     bool* lauf = nullptr;
 
     explicit OpcUaClient_Handler(const char* std_cfg, int argc, char** argv) : Handler(std_cfg, argc, argv){};
 
     bool get_new_setup(bool block, bool need_cfg) final {
-        std::cout << "OpcUaClient_Handler: get_new_setup: block = " << block << ", need_cfg = " << need_cfg << std::endl;
+        //std::cout << "OpcUaClient_Handler: get_new_setup: block = " << block << ", need_cfg = " << need_cfg << std::endl;
 
         bool i_ok = false, c_ok = false;
 
@@ -62,7 +50,7 @@ public:
 
                         //PublishingPort
                     } else if (n.first == "Instructions") {
-                        Infos = OpcUaClient_InfoSet(n.second.c_str());
+                        opcUaClientInfoSet = OpcUaClient_InfoSet(n.second.c_str());
                         i_ok = true;
                     }
                 }
@@ -82,7 +70,7 @@ public:
 
         m = new OpcUaClient_IntegrationModule(adr_local);
 
-        m->Infos = &Infos;
+        m->Infos = &opcUaClientInfoSet;
         m->opcua_adr = adr_opcua;
 
         auto thread = new pthread_t;

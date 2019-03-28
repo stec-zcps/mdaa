@@ -78,6 +78,8 @@ public:
 
         std::string topic = "NewInformation";
 
+        std::cout << "Item changed: Sending on topic " << topic << ", message " << std::string(msg_c) << "\n";
+
         zmq::message_t t(topic.c_str(), topic.length()), c(msg_c, strlen(msg_c));
 
         modul->publisher.send(t, ZMQ_SNDMORE);
@@ -85,6 +87,7 @@ public:
     }
 
     static int createSubscription(OpcUaClient_IntegrationModule* modul, UA_Client_StatusChangeNotificationCallback statusChangeCallback, UA_Client_DeleteSubscriptionCallback deleteSubscriptionCallback){
+        std::cout << "Creating subscription on " << modul->opcua_adr << "\n";
 
         UA_CreateSubscriptionRequest request = UA_CreateSubscriptionRequest_default();
         UA_CreateSubscriptionResponse response = UA_Client_Subscriptions_create(modul->client, request, modul, statusChangeCallback, deleteSubscriptionCallback);
@@ -97,10 +100,13 @@ public:
     }
 
     static int monitorNode(OpcUaClient_IntegrationModule* modul, std::pair<const std::string, OpcUaClient_Info>* inf, UA_NodeId node, UA_Client_DataChangeNotificationCallback callback, UA_Client_DeleteMonitoredItemCallback deleteCallback){
+        std::cout << "Monitoring node: " << inf->second.NodeId << "\n";
+
         UA_MonitoredItemCreateRequest monRequest = UA_MonitoredItemCreateRequest_default(node);
         monRequest.requestedParameters.samplingInterval = inf->second.SamplingInterval;
         UA_MonitoredItemCreateResult monResponse = UA_Client_MonitoredItems_createDataChange(modul->client, modul->subscriptionId, UA_TIMESTAMPSTORETURN_BOTH, monRequest, inf, callback, deleteCallback);
 
+        std::cout << "Monitoring node: " << ((monResponse.statusCode == UA_STATUSCODE_GOOD) ? "Monitoring OK" : "Monitoring failed") << "\n";
         return (monResponse.statusCode == UA_STATUSCODE_GOOD ? monResponse.monitoredItemId : -1);
     }
 
@@ -138,6 +144,7 @@ public:
                     for(auto it = modul->Infos->Set.begin(); it != modul->Infos->Set.end(); ++it){
                         UA_NodeId tmp;
                         UA_NodeId_fromString(it->second.NodeId, &tmp);
+                        char* test = (char*)tmp.identifier.string.data;
                         monitorNode(modul, &*it, tmp, handlerMonitoredItemChanged, nullptr);
                     }
                     ++state;
