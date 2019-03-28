@@ -26,7 +26,9 @@ public:
     bool opcUaRun = false;
 
     zmq::context_t context_data_sub = zmq::context_t(1);
+    //std::vector<zmq::context_t> context_data_sub;// = zmq::context_t(1);
     zmq::socket_t data_subscriber = zmq::socket_t(context_data_sub, ZMQ_SUB);
+    //std::vector<zmq::socket_t> data_subscriber;// = zmq::socket_t(context_data_sub, ZMQ_SUB);
 
     std::string* adr_data_sub = nullptr;
 
@@ -134,17 +136,51 @@ public:
 
     void connect_and_subscribe_data() {
         std::cout << "Connecting and subscribing to data router\n";
-        data_subscriber.connect(*adr_data_sub);
-        int i = 0;
+
         data_subscriber.setsockopt(ZMQ_RCVTIMEO, 100);
 
+        data_subscriber.connect(*adr_data_sub);
+
         for (auto& n : Infos->Set) {
+            usleep(1000000);
+            std::cout << "Subscribing to topic " << n.second.source << "\n";
             const char* subscription = n.second.source.c_str();
-            data_subscriber.setsockopt(ZMQ_SUBSCRIBE, subscription, 1);
+            data_subscriber.setsockopt(ZMQ_SUBSCRIBE, subscription, strlen(subscription));
         }
     }
 
-    unsigned int sleep_time = 10000;
+
+    static void* subscriber_thread(void* modul) {
+        auto m = (OpcUaServer_IntegrationModule*) modul;
+
+        while(m->opcUaRun){
+            std::pair<std::string, std::string> s = get_sub_msg(&m->data_subscriber);
+            if (s.first == "none" || s.second == "none") {
+                continue;
+            }
+
+            std::cout << s.first << " " << s.second << "\n";
+
+            if(m->Infos->sourceToInfos.count(s.first)){
+                for(auto& e : m->Infos->sourceToInfos[s.first]){
+                    json_object* o = json_tokener_parse(s.second.c_str());
+
+                    if (e->added) {
+                        std::cout << "Updating infos with " << s.second << "\n";
+                        m->updateNode(o, &e->NodeId);
+                    } else {
+                        std::cout << "Adding infos with " << s.second << "\n";
+                        m->addNode(o, &m->root, &e->NodeId);
+                        e->added = true;
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    unsigned int sleep_time = 100;
 
     static void* opcUaServer(void* modul) {
         auto m = (OpcUaServer_IntegrationModule*) modul;
@@ -152,6 +188,7 @@ public:
         int state = 0;
 
         UA_ServerConfig* config = nullptr;
+        pthread_t* thread = nullptr;
 
         while (m->opcUaRun) {
             switch (state) {
@@ -181,6 +218,20 @@ public:
                     break;
                 }
                 case 3: {
+
+                    thread = new pthread_t();
+                    int p = pthread_create(thread, nullptr, subscriber_thread, modul);
+                    std::cout << "Going into OPC UA Server state 4: Starting subscriber thread\n";
+                    ++state;
+                }
+                case 4:{
+
+
+
+
+
+
+                    /*
                     for (auto& i : m->Infos->Set) {
                         std::pair<std::string, std::string> s = get_sub_msg(&m->data_subscriber);
                         if (s.first == "none" || s.second == "none") {
@@ -198,7 +249,8 @@ public:
                                 i.second.added = true;
                             }
                         }
-                    }
+                    }*/
+
 
                     break;
                 }
@@ -209,6 +261,9 @@ public:
             UA_UInt16 r_t = UA_Server_run_iterate(m->server, true);
             usleep(m->sleep_time);
         }
+
+        pthread_join(*thread, nullptr);
+        delete (thread);
 
         UA_Server_delete(m->server);
         UA_ServerConfig_delete(config);

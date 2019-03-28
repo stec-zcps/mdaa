@@ -36,7 +36,7 @@ public:
         for (int i = 0; i < argc - 1; ++i) {
             std::cout << "Handler: Parsing parameter " << i << ": " << argv[i] << " || value: " << argv[i+1] << std::endl ;
 
-            if (strncmp(argv[i], "--moduleid", strlen("--moduleid")) == 0) {
+            if (strlen(argv[i]) == strlen("--moduleid") && strncmp(argv[i], "--moduleid", strlen("--moduleid")) == 0) {
                 json_object_object_add(k, "ModuleId", json_object_new_string(argv[++i]));
                 continue;
             }
@@ -44,27 +44,27 @@ public:
                 json_object_object_add(k, "NetworkAdapter", json_object_new_string(argv[++i]));
                 continue;
             }*/
-            if (strncmp(argv[i], "--moduleip", strlen("--moduleip")) == 0) {
+            if (strlen(argv[i]) == strlen("--moduleip") && strncmp(argv[i], "--moduleip", strlen("--moduleip")) == 0) {
                 json_object_object_add(k, "ModuleIp", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "--managerhost", strlen("--managerhost")) == 0) {
+            if (strlen(argv[i]) == strlen("--managerhost") && strncmp(argv[i], "--managerhost", strlen("--managerhost")) == 0) {
                 json_object_object_add(k, "ManagerHost", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "--managerhostrequestport", strlen("--managerhostrequestport")) == 0) {
+            if (strlen(argv[i]) == strlen("--managerhostrequestport") && strncmp(argv[i], "--managerhostrequestport", strlen("--managerhostrequestport")) == 0) {
                 json_object_object_add(k, "ManagerRequestPort", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "--managerpublishport", strlen("--managerpublishport")) == 0) {
+            if (strlen(argv[i]) == strlen("--managerpublishport") && strncmp(argv[i], "--managerpublishport", strlen("--managerpublishport")) == 0) {
                 json_object_object_add(k, "ManagerPublishPort", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "--datarouterhost", strlen("--datarouterhost")) == 0) {
+            if (strlen(argv[i]) == strlen("--datarouterhost") && strncmp(argv[i], "--datarouterhost", strlen("--datarouterhost")) == 0) {
                 json_object_object_add(k, "DataRouterHost", json_object_new_string(argv[++i]));
                 continue;
             }
-            if (strncmp(argv[i], "--datarouterpublishport", strlen("--datarouterpublishport")) == 0) {
+            if (strlen(argv[i]) == strlen("--datarouterpublishport") && strncmp(argv[i], "--datarouterpublishport", strlen("--datarouterpublishport")) == 0) {
                 json_object_object_add(k, "DataRouterPublishPort", json_object_new_string(argv[++i]));
                 continue;
             }
