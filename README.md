@@ -18,6 +18,7 @@ The manager and the data router are the core modules and necessary for usage.
   - MQTT-client
   - OPCUA-server
   - OPCUA-client
+  - Beckhoff-ADS-client
 - Operation modules
   - Math module
   - Aggregation module
@@ -115,6 +116,9 @@ Example
   }
 }
 ```
+
+### Beckhoff-ADS-Client
+Description will follow
 
 ## Current operation modules
 

@@ -17,6 +17,7 @@ Manager und Data-Router sind die Kernmodule und unbedingt notwendig.
   - MQTT-Client
   - OPCUA-Server
   - OPCUA-Client
+  - Beckhoff-ADS-Client
 - Operationsmodule
   - Mathemodul
   - Aggregationsmodul
@@ -112,6 +113,9 @@ Beispiel
   }
 }
 ```
+
+### Beckhoff-ADS-Client
+Beschreibung folgt
 
 ## Derzeitige Operationsmodule
 
