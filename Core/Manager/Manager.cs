@@ -1,5 +1,6 @@
 ﻿using Fraunhofer.IPA.DataAggregator.Communication;
 using Fraunhofer.IPA.DataAggregator.Communication.Messages;
+using Fraunhofer.IPA.DataAggregator.Modules.IntegrationModules.BeckhoffAds;
 using Fraunhofer.IPA.DataAggregator.Modules.IntegrationModules.Mqtt;
 using Fraunhofer.IPA.DataAggregator.Modules.IntegrationModules.OpcUa.Client;
 using Fraunhofer.IPA.DataAggregator.Modules.IntegrationModules.OpcUa.Server;
@@ -34,6 +35,17 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
             {
                 switch (o.Value.Type)
                 {
+                    case "BeckhoffAds":
+                        {
+                            string amsNetId = o.Value.Configuration["AmsNetId"].ToString();
+                            string amsIpV4 = o.Value.Configuration["AmsIpV4"].ToString();
+                            BeckhoffAdsIntegrationModuleConfigurationMessage adsConfigMsg = new BeckhoffAdsIntegrationModuleConfigurationMessage(o.Key, GetNextFreePublishingPort(), amsNetId, amsIpV4);
+                            IntegrationModuleConfigurations.Add(adsConfigMsg.ModuleId, adsConfigMsg);
+
+                            BeckhoffAdsIntegrationModuleInstructionsMessage adsInstructMsg = new BeckhoffAdsIntegrationModuleInstructionsMessage(o.Key);
+                            IntegrationModuleInstructions.Add(o.Key, adsInstructMsg);
+                            break;
+                        }
                     case "OpcUaClient":
                         {
                             string adr = o.Value.Configuration["OpcUaServerAddress"].ToString();
@@ -126,6 +138,12 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
 
                 switch (type)
                 {
+                    case "BeckhoffAds":
+                        {
+                            BeckhoffAdsIntegrationModuleInstructionsMessage adsInstructMsg = (BeckhoffAdsIntegrationModuleInstructionsMessage)IntegrationModuleInstructions[i.Value.Module];
+                            adsInstructMsg.AdsSymbolsFromTarget.Add(i.Key, new BeckhoffAdsSymbol(i.Value.Access["Symbolname"].ToString(), i.Value.Access["Datatype"].ToString(), (bool)i.Value.Access["Array"]));
+                            break;
+                        }
                     case "OpcUaClient":
                         {
                             OpcUaClientModuleInstructionsMessage opcUaInstructMsg = (OpcUaClientModuleInstructionsMessage)IntegrationModuleInstructions[i.Value.Module];
@@ -151,11 +169,16 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
 
                 switch (type)
                 {
+                    case "BeckhoffAds":
+                        {
+                            BeckhoffAdsIntegrationModuleInstructionsMessage adsInstructMsg = (BeckhoffAdsIntegrationModuleInstructionsMessage)IntegrationModuleInstructions[i.Value.Module];
+                            adsInstructMsg.AdsSymbolsToTarget.Add(i.Key, new BeckhoffAdsSymbol(i.Value.Access["Symbolname"].ToString(), i.Value.Access["Datatype"].ToString(), (bool)i.Value.Access["Array"], i.Value.Source));
+                            break;
+                        }
                     case "OpcUaServer":
                         {
                             OpcUaServerModuleInstructionsMessage opcUaServerModuleInstructionsMessage = (OpcUaServerModuleInstructionsMessage)IntegrationModuleInstructions[i.Value.Module];
                             opcUaServerModuleInstructionsMessage.AddInformation(i.Key, new OpcUaServerNode(i.Value.Access["NodeId"].ToString(), i.Value.Source));
-                            //opcUaServerModuleInstructionsMessage.AddInformation(i.Key, new OpcUaServerNode(i.Value.Access["NodeId"].ToString()));
                             break;
                         }
                     case "MqttClient":
