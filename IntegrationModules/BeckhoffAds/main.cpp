@@ -1,10 +1,10 @@
 #include <iostream>
 
 #include <csignal>
-#include "AdsClient_Handler.h"
+#include "BeckhoffAds_Handler.h"
 
 const char* cfg_std = R"({
-        "ModuleId": "AdsClientModule",
+        "ModuleId": "AdsModule",
         "NetworkAdapter":"ens33",
         "ModuleIp":"192.168.0.164",
         "ManagerHost": "192.168.0.163",
@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     signal(SIGINT, int_handler);
     signal(SIGKILL, int_handler);
 
-    auto h = new AdsClient_Handler(cfg_std, argc, argv);
+    auto h = new BeckhoffAds_Handler(cfg_std, argc, argv);
     h->lauf = &lauf;
 
     h->run();

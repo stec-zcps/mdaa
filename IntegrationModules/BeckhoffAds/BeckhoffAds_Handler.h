@@ -2,29 +2,29 @@
 // Created by dbb on 27.05.19.
 //
 
-#ifndef ADSCLIENT_ADSCLIENT_HANDLER_H
-#define ADSCLIENT_ADSCLIENT_HANDLER_H
+#ifndef BECKHOFFADS_HANDLER_H
+#define BECKHOFFADS_HANDLER_H
 
 #include <string>
 #include <iostream>
 #include "json-c/json.h"
 #include "Handler.h"
-#include "AdsClient_IntegrationModule.h"
-#include "AdsClient_InfoSet.h"
+#include "BeckhoffAds_IntegrationModule.h"
+#include "BeckhoffAds_InfoSet.h"
 
-class AdsClient_Handler : Handler {
+class BeckhoffAds_Handler : Handler {
 public:
     std::string adr_local;
 
-    AdsClient_IntegrationModule* m = nullptr;
+    BeckhoffAds_IntegrationModule* m = nullptr;
 
     std::string netId, IpV4;
 
-    AdsClient_InfoSet adsClientInfoSet;
+    BeckhoffAds_InfoSet AdsSymbolsFromTarget, AdsSymbolsToTarget;
 
     bool* lauf = nullptr;
 
-    explicit AdsClient_Handler(const char* std_cfg, int argc, char** argv) : Handler(std_cfg, argc, argv){};
+    explicit BeckhoffAds_Handler(const char* std_cfg, int argc, char** argv) : Handler(std_cfg, argc, argv){};
 
     bool get_new_setup(bool block, bool need_cfg) final {
         //std::cout << "OpcUaClient_Handler: get_new_setup: block = " << block << ", need_cfg = " << need_cfg << std::endl;
@@ -55,7 +55,16 @@ public:
 
                         //PublishingPort
                     } else if (n.first == "Instructions") {
-                        adsClientInfoSet = AdsClient_InfoSet(n.second.c_str());
+                        json_object* ptr = nullptr;
+                        ptr = json_object_object_get(obj, "AdsSymbolsFromTarget");
+
+                        if(ptr != nullptr) AdsSymbolsFromTarget = BeckhoffAds_InfoSet(ptr);
+
+                        ptr = nullptr;
+                        ptr = json_object_object_get(obj, "AdsSymbolsToTarget");
+
+                        if(ptr != nullptr) AdsSymbolsToTarget = BeckhoffAds_InfoSet(ptr);
+
                         i_ok = true;
                     }
                 }
@@ -73,17 +82,24 @@ public:
 
         get_new_setup(true, true);
 
-        m = new AdsClient_IntegrationModule(adr_local, netId, IpV4);
-
-        for(auto& i : this->adsClientInfoSet.Set) m->adsVerb->beobachteVariable(i.second.symbolname, true);
+        m = new BeckhoffAds_IntegrationModule(adr_local, netId, IpV4);
 
         m->adsVerb->initialisieren();
 
         m->adsVerb->start();
 
+        for(auto& i : this->AdsSymbolsFromTarget.Set){
+            i.second.elemente = m->adsVerb->holeGroesseEinerVariable(i.second.symbolname) / i.second.element_groesse;
+            m->adsVerb->beobachteVariable(i.second.symbolname, true);
+        }
+
         while(*lauf){
             if(get_new_setup(false, false)){
                 m->adsVerb->entferneBeobachtenAlle();
+                for(auto& i : this->AdsSymbolsFromTarget.Set){
+                    i.second.elemente = m->adsVerb->holeGroesseEinerVariable(i.second.symbolname) / i.second.element_groesse;
+                    m->adsVerb->beobachteVariable(i.second.symbolname, true);
+                }
             }
         }
 
@@ -95,4 +111,4 @@ public:
     }
 };
 
-#endif //ADSCLIENT_ADSCLIENT_HANDLER_H
+#endif //BECKHOFFADS_HANDLER_H

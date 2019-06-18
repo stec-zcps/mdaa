@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.4)
-project(adsClient)
+project(BeckhoffAdsIntegrationModule)
 
 include(ExternalProject)
 
@@ -25,7 +25,7 @@ set(JSON-C_LIBRARY_PATH /usr/local/lib)
 link_directories(${JSON-C_LIBRARY_PATH} ${ADSVERB_PATH_BIB} ${COMMON_DIR}/cmake-build-debug ${ADSBIB_PATH})
 link_libraries(json-c adsVerbindung AdsLib-Linux)
 
-add_executable(adsClient main.cpp AdsClient_Info.h AdsClient_InfoSet.h AdsClient_IntegrationModule.h AdsClient_Handler.h)
+add_executable(BeckhoffAdsIntegrationModule main.cpp BeckhoffAds_SymbolInfo.h BeckhoffAds_InfoSet.h BeckhoffAds_IntegrationModule.h BeckhoffAds_Handler.h)
 
 find_package(cppzmq)
-target_link_libraries(adsClient cppzmq json-c pthread CppCommon)
+target_link_libraries(BeckhoffAdsIntegrationModule cppzmq json-c pthread CppCommon)
