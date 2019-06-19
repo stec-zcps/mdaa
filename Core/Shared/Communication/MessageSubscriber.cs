@@ -47,31 +47,50 @@ namespace Fraunhofer.IPA.DataAggregator.Communication
             {
                 subSocket.Options.ReceiveHighWatermark = 1000;
                 string zeroMqAddress = "tcp://" + Host + ":" + Port;
-                subSocket.Connect(zeroMqAddress);
-                subSocket.Subscribe(Topic);
-                Log.Information($"Subscribing to '{Topic}' on '{zeroMqAddress}'");
+
                 while (run)
                 {
-                    string messageTopicReceived = subSocket.ReceiveFrameString();
-                    string messageReceived = subSocket.ReceiveFrameString();
-
-                    if (messageTopicReceived.Equals(Topic))
-                    { 
-                        Log.Verbose($"New message received on topic '{messageTopicReceived}': ${messageReceived}");
+                    try
+                    {
+                        subSocket.Connect(zeroMqAddress);
                         try
                         {
-                            var format = "yyyy-MM-ddTH:mm:ss.fffZ"; // your datetime format
-                            var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
-                            T receivedMessageDeserialized = JsonConvert.DeserializeObject<T>(messageReceived, dateTimeConverter);
-                            OnNewMessageReceived(receivedMessageDeserialized);
+                            subSocket.Subscribe(Topic);
+                            Log.Information($"Subscribing to '{Topic}' on '{zeroMqAddress}'");
+                            while (run)
+                            {
+                                string messageTopicReceived = subSocket.ReceiveFrameString();
+                                string messageReceived = subSocket.ReceiveFrameString();
+
+                                if (messageTopicReceived.Equals(Topic))
+                                {
+                                    Log.Verbose($"New message received on topic '{messageTopicReceived}': ${messageReceived}");
+                                    try
+                                    {
+                                        var format = "yyyy-MM-ddTH:mm:ss.fffZ"; // your datetime format
+                                        var dateTimeConverter = new IsoDateTimeConverter { DateTimeFormat = format };
+                                        T receivedMessageDeserialized = JsonConvert.DeserializeObject<T>(messageReceived, dateTimeConverter);
+                                        OnNewMessageReceived(receivedMessageDeserialized);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Log.Error($"Unable to deserialise: {e}");
+                                    }
+                                }
+                            }
+                            subSocket.Unsubscribe(Topic);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
-                            Log.Error($"Unable to deseriliaze: {e}");
+                            Log.Error($"Unable to subscribe: {e}");
                         }
                     }
+                    catch (Exception e)
+                    {
+                        Log.Error($"Unable to connect: {e.Message}");
+                        System.Threading.Thread.Sleep(3000);
+                    }
                 }
-                subSocket.Unsubscribe(Topic);
             }
         }
         #endregion Methods
