@@ -32,7 +32,7 @@ namespace Fraunhofer.IPA.DataAggregator.DataRouter
         public void run()
         {
             MessageSubscriber<RegistrationMessage> registrationSubscriber = new MessageSubscriber<RegistrationMessage>(ManagerHost, ManagerPort, "NewRegistration");
-            registrationSubscriber.OnNewMessageReceived += OnNewRegistrionReceived;
+            registrationSubscriber.OnNewMessageReceived += OnNewRegistrationReceived;
 
             informationPublisher = new MessagePublisher(PublishingPort);
         }
@@ -43,7 +43,7 @@ namespace Fraunhofer.IPA.DataAggregator.DataRouter
             informationPublisher.PublishMessage(newInformation);
         }
 
-        public void OnNewRegistrionReceived(RegistrationMessage newRegistrationMessage)
+        public void OnNewRegistrationReceived(RegistrationMessage newRegistrationMessage)
         {
             Log.Debug($"New registraion received: {newRegistrationMessage}");
             Log.Debug($"New registraion received: {newRegistrationMessage.Ip}");
