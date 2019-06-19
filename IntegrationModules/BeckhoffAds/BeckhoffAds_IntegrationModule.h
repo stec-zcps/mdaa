@@ -44,7 +44,14 @@ public:
     std::string amsIdent;
 
     adsVerbindung* adsVerb = nullptr;
-    BeckhoffAds_InfoSet* adsInfoSet = nullptr;;
+    BeckhoffAds_InfoSet* adsSymbolsFromTarget = nullptr;
+    BeckhoffAds_InfoSet* adsSymbolsToTarget = nullptr;
+
+    zmq::context_t context_data_sub = zmq::context_t(1);
+    zmq::socket_t data_subscriber = zmq::socket_t(context_data_sub, ZMQ_SUB);
+    std::string* adr_data_sub = nullptr;
+
+    bool lauf;
 
     BeckhoffAds_IntegrationModule(){
         publisher.bind(zmq_adr);
@@ -72,7 +79,7 @@ public:
 
         BeckhoffAds_IntegrationModule* m = moduleKarte.at(instanz);
 
-        for(auto& e : m->adsInfoSet->Set){
+        for(auto& e : m->adsSymbolsFromTarget->Set){
             if(e.second.symbolname == name){
                 if(!e.second.elemente) return;
 
@@ -97,6 +104,48 @@ public:
 
                 m->publisher.send(t, ZMQ_SNDMORE);
                 m->publisher.send(c);
+            }
+        }
+    }
+
+    void connect_and_subscribe_data() {
+        std::cout << "Connecting and subscribing to data router\n";
+
+        data_subscriber.setsockopt(ZMQ_RCVTIMEO, 100);
+
+        data_subscriber.connect(*adr_data_sub);
+
+        for (auto& n : adsSymbolsToTarget->Set) {
+            usleep(1000000);
+            std::cout << "Subscribing to topic " << n.second.source << "\n";
+            const char* subscription = n.second.source.c_str();
+            data_subscriber.setsockopt(ZMQ_SUBSCRIBE, subscription, strlen(subscription));
+        }
+    }
+
+    static void* subscriber_thread(void* modul) {
+        auto m = (BeckhoffAds_IntegrationModule*) modul;
+
+        while(m->lauf){
+            std::pair<std::string, std::string> s = get_sub_msg(&m->data_subscriber);
+            if (s.first == "none" || s.second == "none") {
+                continue;
+            }
+
+            std::cout << s.first << " " << s.second << "\n";
+
+            if(m->adsSymbolsToTarget->sourceToInfos.count(s.first)){
+                for(auto& e : m->adsSymbolsToTarget->sourceToInfos[s.first]){
+                    json_object* o = json_tokener_parse(s.second.c_str());
+
+                    const char* key = json_object_get_string(json_object_object_get(o, "Key"));
+                    json_object* value = json_object_object_get(o, "Value");
+
+                    auto vek = e->erstelleByteArray(value);
+                    auto s = std::string(key);
+
+                    m->adsVerb->schreibeAnhandName(s, vek);
+                }
             }
         }
     }

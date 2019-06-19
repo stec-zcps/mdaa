@@ -27,7 +27,7 @@ public:
     std::uint32_t element_groesse;
     bool array;
 
-    std::string source;
+    std::string source = "";
 
     void stringNachDatentyp(const std::string& string){
         typ = UINT8;
@@ -93,6 +93,10 @@ public:
         json_object* ret = nullptr;
 
         switch (typ) {
+            case STRING:{
+                ret = json_object_new_string((*(std::string*)v_ptr).c_str());
+                break;
+            }
             case UINT8:{
                 ret = json_object_new_int(*(std::uint8_t*) v_ptr);
                 break;
@@ -157,6 +161,64 @@ public:
 
         for (int i = 0; i < anzahl_elemente && i < elemente; ++i, v_ptr += element_groesse){
             json_object_array_add(ret, nachJSONObjSub(typ, v_ptr));
+        }
+
+        return ret;
+    }
+
+#define sub_cpy \
+char* ptr = (char*) &sub; \
+for(int i = 0; i < element_groesse; ++i) ret.at(i) = ptr[i];
+
+    std::vector<uint8_t> erstelleByteArray(json_object* o){
+        std::vector<uint8_t> ret;
+
+        if(array){
+            std::vector<uint8_t>::iterator it;
+            it = ret.begin();
+
+            for(int i = 0; i < json_object_array_length(o); ++i){
+                std::vector<uint8_t> r_sub = erstelleByteArray(json_object_array_get_idx(o, i));
+                it = ret.insert(it, r_sub.begin(), r_sub.end());
+            }
+        }else {
+            if (typ != STRING) {
+                ret.resize(element_groesse, 0);
+
+                switch (typ) {
+                    case UINT8:
+                    case UINT16:
+                    case INT8:
+                    case INT16:
+                    case INT32: {
+                        int sub = json_object_get_int(o);
+                        sub_cpy;
+                        break;
+                    }
+                    case UINT32:
+                    case INT64: {
+                        int64_t sub = json_object_get_int64(o);
+                        sub_cpy;
+                        break;
+                    }
+                    case UINT64: {
+                        break;
+                    }
+                    case FLOAT:
+                    case DOUBLE: {
+                        double sub = json_object_get_double(o);
+                        sub_cpy;
+                        break;
+                    }
+                }
+            } else {
+                const char* c = json_object_get_string(o);
+                size_t l = strlen(c);
+
+                ret.resize(l);
+
+                for (size_t i = 0; i < l; ++i) ret.at(i) = (unsigned char) c[i];
+            }
         }
 
         return ret;

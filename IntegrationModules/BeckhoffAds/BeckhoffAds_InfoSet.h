@@ -14,6 +14,7 @@
 class BeckhoffAds_InfoSet : InfoSet{
 public:
     std::map<std::string, BeckhoffAds_SymbolInfo> Set;
+    std::map<std::string, std::vector<BeckhoffAds_SymbolInfo*>> sourceToInfos;
 
     BeckhoffAds_InfoSet() = default;
 
@@ -31,7 +32,17 @@ public:
     explicit BeckhoffAds_InfoSet(const json_object* objt){
         json_object_object_foreach(objt, key, val){
             if(json_object_is_type(val, json_type_object)){
-                Set.insert({std::string(key), BeckhoffAds_SymbolInfo(val)});
+                BeckhoffAds_SymbolInfo info = BeckhoffAds_SymbolInfo(val);
+                Set.insert({std::string(key), info});
+
+                if(info.source != "") {
+                    if (sourceToInfos.count(info.source)) {
+                        sourceToInfos[info.source].emplace_back(&Set.at(std::string(key)));
+                    } else {
+                        std::vector<BeckhoffAds_SymbolInfo*> vek = {&Set.at(std::string(key))};
+                        sourceToInfos.insert({info.source, vek});
+                    }
+                }
             }
         }
     }
