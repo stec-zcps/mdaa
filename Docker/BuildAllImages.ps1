@@ -1,0 +1,7 @@
+Invoke-Expression "$PSScriptRoot\..\Core\Manager\Docker\BuildDockerImage.ps1"
+Invoke-Expression "$PSScriptRoot\..\Core\DataRouter\Docker\BuildDockerImage.ps1"
+Invoke-Expression "$PSScriptRoot\..\IntegrationModules\Mqtt\Docker\BuildDockerImage.ps1"
+Invoke-Expression "$PSScriptRoot\..\IntegrationModules\OpcUaClient\Docker\BuildDockerImage.ps1"
+Invoke-Expression "$PSScriptRoot\..\IntegrationModules\OpcUaString\Docker\BuildDockerImage.ps1"
+Invoke-Expression "$PSScriptRoot\..\OperationModules\Math\Docker\BuildDockerImage.ps1"
+Invoke-Expression "$PSScriptRoot\..\OperationModules\Aggregation\Docker\BuildDockerImage.ps1"
