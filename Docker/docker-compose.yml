@@ -81,7 +81,7 @@ services:
         max-size: "10m"
 
   IntegrationModule_OpcUaClient:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/opcua-client
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/opcua-client
     hostname: IntegrationModule_OpcUaClient
     networks:
       - mdaa_backend
@@ -103,7 +103,7 @@ services:
         max-size: "10m"
 
   IntegrationModule_OpcUaServer:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/opcua-server
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/opcua-server
     hostname: IntegrationModule_OpcUaServer
     networks:
       - mdaa_backend
@@ -127,7 +127,7 @@ services:
         max-size: "10m"
 
   IntegrationModule_Mqtt:
-    image: stec-zcps/mdaa/integrationmodules/mqtt
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/mqtt
     hostname: IntegrationModule_Mqtt
     networks:
       - mdaa_backend
