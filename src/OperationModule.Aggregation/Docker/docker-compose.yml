@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  
+  operation-module-aggregation:
+    image: "mdaastec/operation-module-aggregation:1.0"
+    build:
+      dockerfile: src/OperationModule.Aggregation/Docker/Dockerfile
+      context: ../../..

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Aggregation": {
+      "commandName": "Project",
+      "commandLineArgs": "--moduleid=Model1$$$AggregationModule1"
+    }
+  }
+}

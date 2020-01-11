@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  
+  integration-module-mqtt:
+    image: "mdaastec/integration-module-mqtt:1.0"
+    build:
+      dockerfile: src/IntegrationModule.Mqtt/Docker/Dockerfile
+      context: ../../..

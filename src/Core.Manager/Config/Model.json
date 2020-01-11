@@ -1,0 +1,68 @@
+[
+  {
+    "Id": "Model1",
+    "Modules": [
+      {
+        "Id": "MqttIntegrationModule1",
+        "Type": "MqttModule",
+        "Managed": true,
+        "Configuration": {
+          "BrokerHostname": "127.0.0.1",
+          "Port": 1883
+        }
+      },
+      {
+        "Id": "MathOperationModule1",
+        "Type": "MathOperationModule",
+        "Managed": false
+      },
+      {
+        "Id": "AggregationModule1",
+        "Type": "AggregationModule",
+        "Managed": false
+      }
+    ],
+    "Information": [
+      {
+        "Type": "Get",
+        "Id": "Inf5",
+        "Module": "MqttIntegrationModule1",
+        "Access": {
+          "Topic": "SensorData",
+          "Mode": "Plain"
+        }
+      },
+      {
+        "Id": "InfOut3",
+        "Type": "Provide",
+        "Module": "MqttIntegrationModule1",
+        "Access": {
+          "Topic": "OpcUaInteger",
+          "Mode": "JSON"
+        },
+        "Source": "Inf3"
+      }
+    ],
+    "Operations": [
+      {
+        "Id": "Operation1",
+        "OperatorModule": "MathOperationModule1",
+        "Description": "${Inf2}*${Inf3}*${multiplicator}",
+        "Variables": {
+          "multiplicator": "10"
+        },
+        "Result": "InfOp1"
+      },
+      {
+        "Id": "Operation2",
+        "OperatorModule": "AggregationModule1",
+        "Description": "{\"Info2\":${Inf2},\"Info2\":${Inf3},\"Infoa\":{\"Info2\":${Inf2}, \"InfoS\":{${value},${timestamp}}}}",
+        "Variables": {
+          "value": "10",
+          "timestamp": "2019-02-21T12:00:00.123Z"
+        },
+        "Result": "InfOp2"
+      }
+    ]
+  }
+]

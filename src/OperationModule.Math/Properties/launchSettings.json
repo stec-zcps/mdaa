@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Math": {
+      "commandName": "Project",
+      "commandLineArgs": "--moduleid=Model1$$$MathOperationModule1"
+    }
+  }
+}

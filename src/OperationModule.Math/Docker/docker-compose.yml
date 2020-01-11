@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  
+  operation-module-math:
+    image: "mdaastec/operation-module-math:1.0"
+    build:
+      dockerfile: src/OperationModule.Math/Docker/Dockerfile
+      context: ../../..

@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  
+  datarouter:
+    image: "mdaastec/datarouter:1.0"
+    build:
+      dockerfile: src/Core.DataRouter/Docker/Dockerfile
+      context: ../../..

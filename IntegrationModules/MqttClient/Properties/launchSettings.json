@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "MqttIntegrationModule": {
-      "commandName": "Project",
-      "commandLineArgs": "--moduleid=MqttIntegrationModule2"
-    }
-  }
-}

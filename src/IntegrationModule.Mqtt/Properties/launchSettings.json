@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "MqttIntegrationModule": {
+      "commandName": "Project",
+      "commandLineArgs": "--moduleid=Model1$$$MqttIntegrationModule1"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
