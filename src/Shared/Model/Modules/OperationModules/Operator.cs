@@ -22,6 +22,7 @@ namespace Mdaa.Model.Modules.OperationModules
     using Mdaa.Communication;
     using Mdaa.Communication.Messages;
     using Mdaa.Model.Informations;
+    using Serilog;
 
     public class Operator
     {
@@ -55,6 +56,7 @@ namespace Mdaa.Model.Modules.OperationModules
             this.ParsedNeededInformationFromDescription();
             foreach (var neededInformation in this.NeededInformation)
             {
+                Log.Information($"Subscribing for needed information '{neededInformation}' on DataRouter '{this.DataRouterHost}:{this.DataRouterPublishPort}'");
                 this.messageSubscriber = new MessageSubscriber<InformationMessage>(this.DataRouterHost, this.DataRouterPublishPort, neededInformation);
                 this.messageSubscriber.NewMessageReceived += this.OnNewInformationReceived;
             }

@@ -21,6 +21,7 @@ namespace Fraunhofer.IPA.DataAggregator.Modules.OperationModules.Math
     using Mdaa.Model.Modules.OperationModules;
     using Mdaa.Model.Modules.OperationModules.Math;
     using org.mariuszgromada.math.mxparser;
+    using Serilog;
 
     public class MathOperator : Operator
     {
@@ -48,13 +49,12 @@ namespace Fraunhofer.IPA.DataAggregator.Modules.OperationModules.Math
                 Expression mxParserExpression = new Expression(expressionToCalculate);
                 double result = mxParserExpression.calculate();
 
-                // new Information(ResultName, result);
                 this.OnNewResultCalculated?.Invoke(new InformationMessage(this.ResultName, result, DateTime.Now));
-                Console.WriteLine($"Result: {result}");
+                Log.Debug($"Result '{this.ResultName}' calculated: {result}");
             }
             else
             {
-                Console.WriteLine("Some information are missing for calculation");
+                Log.Information("Some information are missing for calculation");
             }
         }
 

@@ -36,21 +36,22 @@ namespace Fraunhofer.IPA.DataAggregator.Modules.OperationModules.Math
 
         public void OnNewResultCalculated(InformationMessage newResultInformation)
         {
-            Log.Debug("New result calculated: " + newResultInformation);
+            Log.Information($"Sending calculated result '{newResultInformation.Topic}': {JsonConvert.SerializeObject(newResultInformation)}");
             this.messagePublisher.PublishMessage(newResultInformation, "NewInformation");
         }
 
         protected override void NewConfigurationMessageReceived(string configurationMessageString)
         {
             var newConfigMessage = JsonConvert.DeserializeObject<MathOperationModuleConfigurationMessage>(configurationMessageString);
+            Log.Information($"Configuration received received: {newConfigMessage}");
 
-            Log.Information("Config received");
             this.messagePublisher = new MessagePublisher(newConfigMessage.PublishingPort);
         }
 
         protected override void NewInstructionsMessageReceived(string instructionsMessageString)
         {
             var newInstructionsMessage = JsonConvert.DeserializeObject<MathOperationModuleInstructionsMessage>(instructionsMessageString);
+            Log.Information($"Instructions received received: {newInstructionsMessage}");
 
             foreach (var mathOperatorConfig in newInstructionsMessage.MathOperatorConfigs)
             {
