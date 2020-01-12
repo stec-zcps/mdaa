@@ -19,7 +19,7 @@
       {
         "Id": "AggregationModule1",
         "Type": "AggregationOperationModule",
-        "Managed": true
+        "Managed": false
       }
     ],
     "Information": [

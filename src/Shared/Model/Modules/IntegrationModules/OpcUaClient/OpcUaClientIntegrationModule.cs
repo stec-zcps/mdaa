@@ -1,4 +1,4 @@
-﻿// <copyright file="InformationToGet.cs" company="Fraunhofer Institute for Manufacturing Engineering and Automation IPA">
+﻿// <copyright file="OpcUaClientModule.cs" company="Fraunhofer Institute for Manufacturing Engineering and Automation IPA">
 // Copyright 2019 Fraunhofer Institute for Manufacturing Engineering and Automation IPA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-namespace Manager.Model.InstructionalModel
+namespace Mdaa.Model.Modules.IntegrationModules.OpcUaClient
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
-    public class InformationToGet : Information
+    public class OpcUaClientIntegrationModule : Module
     {
+        public OpcUaClientModuleConfiguration Configuration { get; set; }
     }
 }

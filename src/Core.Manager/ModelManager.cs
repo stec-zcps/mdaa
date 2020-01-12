@@ -17,15 +17,18 @@
 namespace Fraunhofer.IPA.DataAggregator.Manager
 {
     using System.Collections.Generic;
-    using Fraunhofer.IPA.DataAggregator.Manager;
     using Mdaa.Communication;
     using Mdaa.Communication.Messages;
     using Mdaa.Manager.Controller.Docker;
+    using Mdaa.Model;
+    using Newtonsoft.Json;
     using Serilog;
 
     public class ModelManager
     {
         public List<InstructionalModel> InstructionalModels { get; set; }
+
+        public ManagerDockerContainerController ManagerDockerContainerController { get; set; }
 
         public Dictionary<string, DataRouterDockerContainerController> ModelDataRouterControllers { get; set; }
             = new Dictionary<string, DataRouterDockerContainerController>();
@@ -49,6 +52,8 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
         {
             this.InstructionalModels = instructionalModels;
 
+            this.ManagerDockerContainerController = new ManagerDockerContainerController();
+
             foreach (var model in instructionalModels)
             {
                 var dataRouterController = new DataRouterDockerContainerController(model.Id);
@@ -66,6 +71,11 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
         public void Init()
         {
             this.ModuleCommunicationHandler.Start();
+
+            foreach (var model in this.InstructionalModels)
+            {
+                this.ManagerDockerContainerController.InitModel(model).Wait();
+            }
 
             foreach (var dataRouter in this.ModelDataRouterControllers.Values)
             {
@@ -87,7 +97,7 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
 
         public void OnNewRegistrationMessageReceived(RegistrationMessage newRegistrationMessage)
         {
-            Log.Information($"New Module with id '{newRegistrationMessage.ModuleId}' registered");
+            Log.Information($"New Module with id '{newRegistrationMessage.ModuleId}' registered: {JsonConvert.SerializeObject(newRegistrationMessage)}");
 
             var modelId = newRegistrationMessage.ModuleId.Split("$$$")[0];
             var moduleId = newRegistrationMessage.ModuleId.Split("$$$")[1];

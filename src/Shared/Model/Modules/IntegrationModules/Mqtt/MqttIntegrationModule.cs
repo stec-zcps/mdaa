@@ -20,7 +20,7 @@ namespace Mdaa.Model.Modules.IntegrationModules.Mqtt
     using Mdaa.Communication.Messages.Configuration;
     using Mdaa.Communication.Messages.Instructions;
 
-    public class MqttModule : Module
+    public class MqttIntegrationModule : Module
     {
         public MqttModuleConfiguration Configuration { get; set; }
 

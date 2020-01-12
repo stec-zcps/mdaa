@@ -139,11 +139,15 @@ namespace Mdaa.Modules
 
         protected void Register()
         {
-            RegistrationMessage regMsg = new RegistrationMessage(this.ModuleId);
+            RegistrationMessage regMsg = new RegistrationMessage(this.ModuleId)
+            {
+                Ip = this.ModuleIp,
+            };
             var messageToServer = new NetMQMessage();
             messageToServer.AppendEmptyFrame();
             messageToServer.Append("REGISTER");
             messageToServer.Append(JsonConvert.SerializeObject(regMsg));
+            Log.Information($"Sending registration to manager: {JsonConvert.SerializeObject(regMsg)}");
             this.socket.SendMultipartMessage(messageToServer);
         }
 

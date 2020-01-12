@@ -1,4 +1,4 @@
-﻿// <copyright file="OpcUaClientModule.cs" company="Fraunhofer Institute for Manufacturing Engineering and Automation IPA">
+﻿// <copyright file="OpcUaServerModule.cs" company="Fraunhofer Institute for Manufacturing Engineering and Automation IPA">
 // Copyright 2019 Fraunhofer Institute for Manufacturing Engineering and Automation IPA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-namespace Mdaa.Model.Modules.IntegrationModules.OpcUaClient
+namespace Mdaa.Model.Modules.IntegrationModules.OpcUaServer
 {
-    public class OpcUaClientModule : Module
+    public class OpcUaServerIntegrationModule : Module
     {
-        public OpcUaClientModuleConfiguration Configuration { get; set; }
+        public OpcUaServerModuleConfiguration Configuration { get; set; }
     }
 }

@@ -22,6 +22,7 @@ namespace Fraunhofer.IPA.DataAggregator.Manager
     using System.Reflection;
     using Fraunhofer.IPA.DataAggregator.Manager;
     using global::Manager;
+    using Mdaa.Model;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;

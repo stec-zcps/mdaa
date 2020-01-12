@@ -39,7 +39,8 @@ namespace Mdaa.Manager.Controller.Docker
                 await this.RemoveDataRouter().ConfigureAwait(true);
             }
 
-            await this.CreateNetworkIfNotExist($"{ContainerPrefix}{this.ModelId}").ConfigureAwait(true);
+            var networkName = $"{ContainerPrefix}{this.ModelId}";
+            await this.CreateNetworkIfNotExist(networkName).ConfigureAwait(true);
 
             var environmentVariables = new List<string>()
             {
@@ -52,13 +53,27 @@ namespace Mdaa.Manager.Controller.Docker
                 NetworkMode = $"{ContainerPrefix}{this.ModelId}",
             };
 
+            var endpointSettings = new EndpointSettings()
+            {
+                Aliases = new List<string>(){ "DataRouter" }
+            };
+
+            var networkConfig = new NetworkingConfig()
+            {
+                EndpointsConfig = new Dictionary<string, EndpointSettings>()
+                {
+                    { networkName, endpointSettings },
+                },
+            };
+
             await this.PullImage(DockerImageRepository, DockerImageTag).ConfigureAwait(true);
 
             await this.CreateAndStartContainer(
                 $"{ContainerPrefix}{this.ModelId}_DataRouter",
                 $"{DockerImageRepository}:{DockerImageTag}",
                 environmentVariables,
-                hostConfig).ConfigureAwait(true);
+                hostConfig,
+                networkConfig).ConfigureAwait(true);
         }
 
         public async Task RemoveDataRouter()

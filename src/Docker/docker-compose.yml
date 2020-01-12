@@ -3,15 +3,14 @@ version: "3"
 services:
 
   Manager:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/core/manager
-    hostname: Manager
-    networks:
-      - mdaa_backend
+    image: mdaastec/manager:1.0
     ports: 
       - "${ManagerRequestPort}:${ManagerRequestPort}"
       - "${ManagerPublishingPort}:${ManagerPublishingPort}"
     volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "manager_config:/app/Config/"
+      #- "./Config/Model.json:/app/Config/Model.json"
     environment:
       RegistrationResponderPort: ${ManagerRequestPort}
       MessagePublisherPort: ${ManagerPublishingPort}
@@ -20,149 +19,16 @@ services:
       options:
         max-size: "10m"
 
-  DataRouter:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/core/datarouter
-    hostname: DataRouter
-    networks:
-      - mdaa_backend
-    ports:
-      - "${DataRouterPublishingPort}:${DataRouterPublishingPort}"
-    depends_on:
-      - Manager
-    environment:
-      PublishingPort: ${DataRouterPublishingPort}
-      ManagerHost: Manager
-      ManagerPort: ${ManagerPublishingPort}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-  OperationModule_Math:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/operationmodules/math
-    hostname: OperationModule_Math
-    networks:
-      - mdaa_backend
-    depends_on:
-      - Manager
-      - DataRouter
-    environment:
-      ModuleId: MathOperationModule1
-      ModuleIp: OperationModule_Aggregation
-      ManagerHost: Manager
-      ManagerRequestPort: ${ManagerPublishingPort}
-      ManagerPublishPort: ${ManagerPublishingPort}
-      DataRouterHost: DataRouter
-      DataRouterPublishPort: ${DataRouterPublishingPort}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-  OperationModule_Aggregation:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/operationmodules/aggregation
-    hostname: OperationModule_Aggregation
-    networks:
-      - mdaa_backend
-    depends_on:
-      - Manager
-      - DataRouter
-    environment:
-      ModuleId: AggregationModule
-      ModuleIp: OperationModule_Aggregation
-      ManagerHost: Manager
-      ManagerRequestPort: ${ManagerRequestPort}
-      ManagerPublishPort: ${ManagerPublishingPort}
-      DataRouterHost: DataRouter
-      DataRouterPublishPort: ${DataRouterPublishingPort}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-  IntegrationModule_OpcUaClient:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/opcua-client
-    hostname: IntegrationModule_OpcUaClient
-    networks:
-      - mdaa_backend
-    depends_on:
-      - Manager
-      - DataRouter
-      - MqttBroker
-    environment:
-      ModuleId: OpcUaClientModule
-      ModuleIp: IntegrationModule_OpcUaClient
-      ManagerHost: Manager
-      ManagerRequestPort: ${ManagerPublishingPort}
-      ManagerPublishPort: ${ManagerPublishingPort}
-      DataRouterHost: DataRouter
-      DataRouterPublishPort: ${DataRouterPublishingPort}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-  IntegrationModule_OpcUaServer:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/opcua-server
-    hostname: IntegrationModule_OpcUaServer
-    networks:
-      - mdaa_backend
-    ports:
-      - "4840:4840"
-    depends_on:
-      - Manager
-      - DataRouter
-      - MqttBroker
-    environment:
-      ModuleId: OpcUaServerModule
-      ModuleIp: IntegrationModule_OpcUaServer
-      ManagerHost: Manager
-      ManagerRequestPort: ${ManagerPublishingPort}
-      ManagerPublishPort: ${ManagerPublishingPort}
-      DataRouterHost: DataRouter
-      DataRouterPublishPort: ${DataRouterPublishingPort}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-  IntegrationModule_Mqtt:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/mqtt
-    hostname: IntegrationModule_Mqtt
-    networks:
-      - mdaa_backend
-    depends_on:
-      - Manager
-      - DataRouter
-      - MqttBroker
-    environment:
-      ModuleId: MqttIntegrationModule
-      ModuleIp: IntegrationModule_Mqtt
-      ManagerHost: Manager
-      ManagerRequestPort: ${ManagerPublishingPort}
-      ManagerPublishPort: ${ManagerPublishingPort}
-      DataRouterHost: DataRouter
-      DataRouterPublishPort: ${DataRouterPublishingPort}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-  MqttBroker:
-    image: eclipse-mosquitto
-    hostname: MqttBroker
-    networks:
-      - mdaa_backend
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-
-networks:
-  mdaa_backend:
+#  MqttBroker:
+#    image: eclipse-mosquitto
+#    hostname: MqttBroker
+#    ports:
+#      - "1883:1883"
+#      - "9001:9001"
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
 
 volumes:
   manager_config:

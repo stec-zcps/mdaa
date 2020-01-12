@@ -20,10 +20,20 @@ namespace Mdaa.Model.Modules
     using JsonSubTypes;
     using Mdaa.Communication.Messages;
     using Mdaa.Model.Informations;
+    using Mdaa.Model.Modules.IntegrationModules.Mqtt;
+    using Mdaa.Model.Modules.IntegrationModules.OpcUaClient;
+    using Mdaa.Model.Modules.IntegrationModules.OpcUaServer;
+    using Mdaa.Model.Modules.OperationModules.Aggregation;
+    using Mdaa.Model.Modules.OperationModules.Math;
     using Newtonsoft.Json;
 
     [JsonConverter(typeof(JsonSubtypes), "Type")]
-    public abstract class Module
+    [JsonSubtypes.KnownSubType(typeof(MqttIntegrationModule), ModuleType.MqttIntegrationModule)]
+    [JsonSubtypes.KnownSubType(typeof(OpcUaClientIntegrationModule), ModuleType.OpcUaClientIntegrationModule)]
+    [JsonSubtypes.KnownSubType(typeof(OpcUaServerIntegrationModule), ModuleType.OpcUaServerIntegrationModule)]
+    [JsonSubtypes.KnownSubType(typeof(MathOperationModule), ModuleType.MathOperationModule)]
+    [JsonSubtypes.KnownSubType(typeof(AggregationOperationModule), ModuleType.AggregationOperationModule)]
+    public class Module
     {
         protected static uint NextFreePublishingPort = 40100;
 

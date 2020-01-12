@@ -14,13 +14,12 @@
 // limitations under the License.
 // </copyright>
 
-namespace Mdaa.Model.Modules.OperationModules
+namespace Mdaa.Model.Modules.OperationModules.Math
 {
     using System.Collections.Generic;
     using Mdaa.Communication.Messages;
     using Mdaa.Communication.Messages.Configuration;
     using Mdaa.Communication.Messages.Instructions;
-    using Mdaa.Model.Modules.OperationModules.Math;
 
     public class MathOperationModule : OperationModule
     {

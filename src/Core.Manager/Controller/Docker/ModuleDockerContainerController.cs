@@ -19,28 +19,33 @@ namespace Mdaa.Manager.Controller.Docker
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Fraunhofer.IPA.DataAggregator.Manager;
     using global::Docker.DotNet.Models;
-    using global::Manager.Model.InstructionalModel;
+    using Mdaa.Model;
+    using Mdaa.Model.Modules;
+    using Mdaa.Model.Modules.IntegrationModules.Mqtt;
+    using Mdaa.Model.Modules.IntegrationModules.OpcUaClient;
+    using Mdaa.Model.Modules.IntegrationModules.OpcUaServer;
+    using Mdaa.Model.Modules.OperationModules.Aggregation;
+    using Mdaa.Model.Modules.OperationModules.Math;
 
     public class ModuleDockerContainerController : DockerContainerController
     {
         public readonly Dictionary<Type, string> ModuleDockerImageRepositories = new Dictionary<Type, string>()
         {
-            { typeof(MqttModule), "mdaastec/integration-module-mqtt" },
-            { typeof(OpcUaClientModule), "mdaastec/integration-module-opcua-client" },
-            { typeof(OpcUaServerModule), "mdaastec/integration-module-opcua-server" },
+            { typeof(MqttIntegrationModule), "mdaastec/integration-module-mqtt" },
+            { typeof(OpcUaClientIntegrationModule), "mdaastec/integration-module-opcua-client" },
+            { typeof(OpcUaServerIntegrationModule), "mdaastec/integration-module-opcua-server" },
             { typeof(MathOperationModule), "mdaastec/operation-module-math" },
-            { typeof(AggregationModule), "mdaastec/operation-module-aggregation" },
+            { typeof(AggregationOperationModule), "mdaastec/operation-module-aggregation" },
         };
 
         public readonly Dictionary<Type, string> ModuleDockerImageTags = new Dictionary<Type, string>()
         {
-            { typeof(MqttModule), "1.0" },
-            { typeof(OpcUaClientModule), "1.0" },
-            { typeof(OpcUaServerModule), "1.0" },
+            { typeof(MqttIntegrationModule), "1.0" },
+            { typeof(OpcUaClientIntegrationModule), "1.0" },
+            { typeof(OpcUaServerIntegrationModule), "1.0" },
             { typeof(MathOperationModule), "1.0" },
-            { typeof(AggregationModule), "1.0" },
+            { typeof(AggregationOperationModule), "1.0" },
         };
 
         public ModuleDockerContainerController(InstructionalModel instructionalModel)
@@ -52,7 +57,8 @@ namespace Mdaa.Manager.Controller.Docker
 
         public async Task Init()
         {
-            await this.CreateNetworkIfNotExist($"{ContainerPrefix}{this.InstructionalModel.Id}").ConfigureAwait(true);
+            var networkName = $"{ContainerPrefix}{this.InstructionalModel.Id}";
+            await this.CreateNetworkIfNotExist(networkName).ConfigureAwait(true);
 
             foreach (var module in this.InstructionalModel.Modules)
             {
@@ -74,9 +80,21 @@ namespace Mdaa.Manager.Controller.Docker
                 $"ManagerHost={Environment.MachineName}",
                 $"DataRouterHost={Environment.MachineName}",
             };
+            var networkName = $"{ContainerPrefix}{this.InstructionalModel.Id}";
             var hostConfig = new HostConfig()
             {
-                NetworkMode = $"{ContainerPrefix}{this.InstructionalModel.Id}",
+                NetworkMode = networkName,
+            };
+            var endpointSettings = new EndpointSettings()
+            {
+                Aliases = new List<string>() { module.Id },
+            };
+            var networkConfig = new NetworkingConfig()
+            {
+                EndpointsConfig = new Dictionary<string, EndpointSettings>()
+                {
+                    { networkName, endpointSettings },
+                },
             };
 
             await this.PullImage(moduleDockerImageRepository, moduleDockerImageTag).ConfigureAwait(true);
@@ -85,7 +103,8 @@ namespace Mdaa.Manager.Controller.Docker
                 $"{ContainerPrefix}{this.InstructionalModel.Id}_{module.Id}",
                 $"{moduleDockerImageRepository}:{moduleDockerImageTag}",
                 environmentVariables,
-                hostConfig).ConfigureAwait(true);
+                hostConfig,
+                networkConfig).ConfigureAwait(true);
         }
 
         public async Task RemoveModule(Module module)

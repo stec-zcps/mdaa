@@ -18,9 +18,9 @@ namespace Manager
 {
     using System;
     using System.Collections.Generic;
-    using Fraunhofer.IPA.DataAggregator.Manager;
-    using Manager.Model.InstructionalModel;
-    using Manager.Model.InstructionalModel.OperationModules;
+    using Mdaa.Model;
+    using Mdaa.Model.Informations;
+    using Mdaa.Model.Modules.OperationModules;
     using Newtonsoft.Json;
     using Serilog;
 

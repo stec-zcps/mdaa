@@ -79,7 +79,7 @@ namespace Mdaa.Manager.Controller.Docker
             }
         }
 
-        public async Task<string> CreateAndStartContainer(string name, string image, List<string> environmentVariables, HostConfig hostConfig)
+        public async Task<string> CreateAndStartContainer(string name, string image, List<string> environmentVariables, HostConfig hostConfig, NetworkingConfig networkingConfig)
         {
             // Create Docker container
             var createContainerResult = await this.DockerClient.Containers.CreateContainerAsync(
@@ -89,6 +89,7 @@ namespace Mdaa.Manager.Controller.Docker
                     Image = image,
                     Env = environmentVariables,
                     HostConfig = hostConfig,
+                    NetworkingConfig = networkingConfig,
                 }).ConfigureAwait(true);
 
             // Start Docker container
@@ -156,6 +157,26 @@ namespace Mdaa.Manager.Controller.Docker
             {
                 var networkCreateResult = await this.DockerClient.Networks.CreateNetworkAsync(networksCreateParameters).ConfigureAwait(true);
             }
+        }
+
+
+        public async Task JoinNetwork(string networkName, string containerId, EndpointSettings endpointSettings)
+        {
+            var networkListResult = this.DockerClient.Networks.ListNetworksAsync().Result;
+            var foundNetwork = networkListResult.Where(n => n.Name == networkName).FirstOrDefault();
+
+            var networkConnectParameters = new NetworkConnectParameters()
+            {
+                Container = containerId,
+                EndpointConfig = endpointSettings,
+
+            };
+            await this.DockerClient.Networks.ConnectNetworkAsync(foundNetwork.ID, networkConnectParameters);
+        }
+
+        public bool IsDotNetRunningInContainer()
+        {
+            return bool.Parse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") ?? "false");
         }
     }
 }

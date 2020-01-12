@@ -1,4 +1,4 @@
-﻿// <copyright file="MathOperationModule.cs" company="Fraunhofer Institute for Manufacturing Engineering and Automation IPA">
+﻿// <copyright file="AggregationModule.cs" company="Fraunhofer Institute for Manufacturing Engineering and Automation IPA">
 // Copyright 2019 Fraunhofer Institute for Manufacturing Engineering and Automation IPA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,34 +14,31 @@
 // limitations under the License.
 // </copyright>
 
-namespace Manager.Model.InstructionalModel
+namespace Mdaa.Model.Modules.OperationModules.Aggregation
 {
     using System.Collections.Generic;
-    using Manager.Model.InstructionalModel.OperationModules;
     using Mdaa.Communication.Messages;
     using Mdaa.Communication.Messages.Configuration;
     using Mdaa.Communication.Messages.Instructions;
-    using Mdaa.Model.Modules.OperationModules.Math;
 
-    public class MathOperationModule : OperationModule
+    public class AggregationOperationModule : OperationModule
     {
         public override ConfigurationMessage GetConfigurationMessage()
         {
-            MathOperationModuleConfigurationMessage configurationMessage = new MathOperationModuleConfigurationMessage(this.Id, this.GetNextFreePublishingPort());
-
+            AggregationModuleConfigurationMessage configurationMessage = new AggregationModuleConfigurationMessage(this.Id, this.GetNextFreePublishingPort());
             return configurationMessage;
         }
 
         public override InstructionsMessage GetInstructionsMessage()
         {
-            var mathOperationConfigs = new List<MathOperatorConfig>();
+            var aggregationConfigs = new List<AggregationConfig>();
             foreach (var operation in this.Operations.Values)
             {
-                var mathOperationConfig = new MathOperatorConfig(operation.Result, operation.Description, operation.Variables);
-                mathOperationConfigs.Add(mathOperationConfig);
+                var aggregationConfig = new AggregationConfig(operation.Result, operation.Description, operation.Variables);
+                aggregationConfigs.Add(aggregationConfig);
             }
 
-            var instructionsMessage = new MathOperationModuleInstructionsMessage(this.Id, mathOperationConfigs);
+            var instructionsMessage = new AggregationModuleInstructionsMessage(this.Id, aggregationConfigs);
             return instructionsMessage;
         }
     }
