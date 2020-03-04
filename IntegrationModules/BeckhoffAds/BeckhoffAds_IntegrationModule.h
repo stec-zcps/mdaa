@@ -138,7 +138,7 @@ public:
                 for(auto& e : m->adsSymbolsToTarget->sourceToInfos[s.first]){
                     json_object* o = json_tokener_parse(s.second.c_str());
 
-                    const char* key = json_object_get_string(json_object_object_get(o, "Key"));
+                    const char* key = json_object_get_string(json_object_object_get(o, "Key")); //?
                     json_object* value = json_object_object_get(o, "Value");
 
                     auto vek = e->erstelleByteArray(value);
