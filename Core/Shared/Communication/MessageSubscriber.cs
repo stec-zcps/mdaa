@@ -88,8 +88,8 @@ namespace Fraunhofer.IPA.DataAggregator.Communication
                     catch (Exception e)
                     {
                         Log.Error($"Unable to connect: {e.Message}");
-                        System.Threading.Thread.Sleep(3000);
                     }
+                    System.Threading.Thread.Sleep(3000);
                 }
             }
         }

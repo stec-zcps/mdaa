@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Fraunhofer.IPA.DataAggregator.DataRouter
 {
-    class InformationSubscriber
+    class InformationSubscriber //obsolet?
     {
         private Thread listenerThread;
 
@@ -43,7 +43,6 @@ namespace Fraunhofer.IPA.DataAggregator.DataRouter
                     string messageReceived = subSocket.ReceiveFrameString();
                     Information receivedInformation = JsonConvert.DeserializeObject<Information>(messageReceived);
                     OnNewInformationReceived(receivedInformation);
-                    Log.Debug("Test");
                 }
             }
         }

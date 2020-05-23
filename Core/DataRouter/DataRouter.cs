@@ -45,9 +45,9 @@ namespace Fraunhofer.IPA.DataAggregator.DataRouter
 
         public void OnNewRegistrationReceived(RegistrationMessage newRegistrationMessage)
         {
-            Log.Debug($"New registraion received: {newRegistrationMessage}");
-            Log.Debug($"New registraion received: {newRegistrationMessage.Ip}");
-            Log.Debug($"New registraion received: {newRegistrationMessage.Port}");
+            Log.Debug($"New registration received: {newRegistrationMessage}");
+            Log.Debug($"New registration received: {newRegistrationMessage.Ip}");
+            Log.Debug($"New registration received: {newRegistrationMessage.Port}");
 
             if (RegisteredModules.ContainsKey(newRegistrationMessage.Port))
             {
