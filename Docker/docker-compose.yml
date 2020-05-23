@@ -17,8 +17,8 @@ services:
       MessagePublisherPort: ${ManagerPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   DataRouter:
     image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/core/datarouter
@@ -35,8 +35,8 @@ services:
       ManagerPort: ${ManagerPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   OperationModule_Math:
     image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/operationmodules/math
@@ -56,8 +56,8 @@ services:
       DataRouterPublishPort: ${DataRouterPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   OperationModule_Aggregation:
     image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/operationmodules/aggregation
@@ -77,11 +77,11 @@ services:
       DataRouterPublishPort: ${DataRouterPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   IntegrationModule_OpcUaClient:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/opcua-client
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/opcua-client
     hostname: IntegrationModule_OpcUaClient
     networks:
       - mdaa_backend
@@ -99,11 +99,11 @@ services:
       DataRouterPublishPort: ${DataRouterPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   IntegrationModule_OpcUaServer:
-    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/opcua-server
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/opcua-server
     hostname: IntegrationModule_OpcUaServer
     networks:
       - mdaa_backend
@@ -123,11 +123,11 @@ services:
       DataRouterPublishPort: ${DataRouterPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   IntegrationModule_Mqtt:
-    image: stec-zcps/mdaa/integrationmodules/mqtt
+    image: registry.gitlab.cc-asp.fraunhofer.de:4567/stec-zcps/mdaa/integrationmodules/mqtt
     hostname: IntegrationModule_Mqtt
     networks:
       - mdaa_backend
@@ -145,8 +145,8 @@ services:
       DataRouterPublishPort: ${DataRouterPublishingPort}
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
   MqttBroker:
     image: eclipse-mosquitto
@@ -158,8 +158,8 @@ services:
       - "9001:9001"
     logging:
       driver: "json-file"
-        options:
-          max-size: "10m"
+      options:
+        max-size: "10m"
 
 networks:
   mdaa_backend:

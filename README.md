@@ -105,7 +105,7 @@ Before building the server, one must build the CppCommon-library placed in the "
 #### Usage
 The OPCUA-Client module is bound to one OPCUA-Server. For configuration, the OPCUA-Client needs the address of this OPCUA-Server in a string field called "OpcUaServerAddress" in the form "opc.tcp://${HOSTNAME, DOMAIN OR IP}:${PORT}".
 
-Example
+Configuration example
 ```
 "Modules": {
   "integrationModul1: {
@@ -117,8 +117,46 @@ Example
 }
 ```
 
+Data access
+```
+"InformationsToGet": {
+  "Inf1": {
+    "Module": "integrationModul1",
+    "Access": {
+      "NodeId": "ns=2;s=Demo.Dynamic.Scalar.Boolean"
+    }
+  }
+}
+```
+
 ### Beckhoff-ADS-Client
-Description will follow
+C++14, Linux  
+Needs adsVerbindung https://github.com/408b7f8b/adsVerbindung
+
+Configuration example
+```
+"Modules": {
+  "integrationModul1: {
+    "Type": "AdsClient",
+    "Configuration": {
+      "AmsNetId": "192.168.10.2.1.1",
+      "AmsIpV4": "192.168.10.2"
+    }
+  }
+}
+```
+
+Data access
+```
+"InformationsToGet": {
+  "Inf1": {
+    "Module": "integrationModul1",
+    "Access": {
+      "Symbolname": "test.integer"
+    }
+  }
+}
+```
 
 ## Current operation modules
 
